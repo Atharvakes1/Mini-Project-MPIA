@@ -16,23 +16,32 @@ app.get('/api/health', (req, res) => {
 
 // Basic Socket.io connection listener
 // Basic Socket.io connection listener
+// Basic Socket.io connection listener
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  // 1. Listen for a 'chatMessage' event from this specific connected user
-  socket.on('chatMessage', (messageData) => {
-    
-    // 2. Log it to the terminal so Member 1 can see it working
-    console.log(`Message from ${socket.id}: ${messageData}`);
+  // 1. SYSTEM ALERT: Tell everyone ELSE that a new user arrived
+  socket.broadcast.emit('systemMessage', 'A new user has joined the chat.');
 
-    // 3. Broadcast that exact message to ALL connected users
-    io.emit('chatMessage', messageData);
+  // The chat payload logic from Day 3
+  socket.on('chatMessage', (msg) => {
+    const messagePayload = {
+      id: socket.id,
+      text: msg,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    io.emit('chatMessage', messagePayload);
   });
 
+  // 2. SYSTEM ALERT: Detect when someone closes their tab
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
+    
+    // Tell the remaining users that someone left
+    io.emit('systemMessage', 'A user has left the chat.');
   });
 });
+
 
 const PORT = process.env.PORT || 3000;
 
