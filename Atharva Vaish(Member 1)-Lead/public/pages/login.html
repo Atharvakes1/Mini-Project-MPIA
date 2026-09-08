@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Clone MPIA - Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        body {
+            background-color: var(--bg-primary, #090909);
+            color: var(--text-primary, #ffffff);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.15) 0%, #090909 50%),
+                        radial-gradient(circle at bottom left, rgba(124, 58, 237, 0.1) 0%, #090909 50%);
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: var(--accent-primary, #7C3AED);
+            border-radius: 50%;
+            box-shadow: 0 0 12px 2px var(--accent-primary, #7C3AED);
+            animation: float-up 15s infinite linear;
+            opacity: 0.6;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+        .particle:nth-child(1) { left: 10%; animation-duration: 12s; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 25%; animation-duration: 15s; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 40%; animation-duration: 18s; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 55%; animation-duration: 14s; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 70%; animation-duration: 16s; animation-delay: 5s; }
+        .particle:nth-child(6) { left: 85%; animation-duration: 13s; animation-delay: 3s; }
+        .particle:nth-child(7) { left: 95%; animation-duration: 17s; animation-delay: 6s; }
+        .particle:nth-child(8) { left: 5%; animation-duration: 19s; animation-delay: 7s; }
+        .particle:nth-child(9) { left: 50%; animation-duration: 11s; animation-delay: 2s; }
+        .particle:nth-child(10) { left: 80%; animation-duration: 15s; animation-delay: 8s; }
+
+        /* Layout */
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        
+        .brand-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #7C3AED, #4F46E5);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+            transform: rotate(-10deg);
+            transition: transform 0.3s ease;
+        }
+        .brand-logo:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+        .brand-logo i {
+            color: white;
+            width: 40px;
+            height: 40px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(17, 17, 17, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #333;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            color: #7D7D7D;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab.active {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .tab::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+        .tab.active::after {
+            transform: scaleX(1);
+        }
+
+        /* Forms */
+        .form-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .form-section.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #B5B5B5;
+        }
+        .input-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            padding-left: 2.5rem;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+            outline: none;
+        }
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            bottom: 0.875rem;
+            color: #7D7D7D;
+            width: 18px;
+            height: 18px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            bottom: 0.875rem;
+            color: #7D7D7D;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .password-toggle:hover {
+            color: #fff;
+        }
+
+        /* Password Strength */
+        .pwd-strength {
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+            display: none;
+        }
+        .pwd-fill {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+        }
+        .pwd-text {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        /* Human Checkbox */
+        .human-check {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #333;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s;
+        }
+        .human-check:hover {
+            border-color: #555;
+        }
+        .check-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #555;
+            border-radius: 6px;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .check-box.loading {
+            border-color: var(--accent-primary);
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            border-radius: 50%;
+        }
+        .check-box.success {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        .check-box.success i {
+            color: white;
+            display: block;
+        }
+        .check-box i {
+            display: none;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+        .btn-primary:hover {
+            background: #6D28D9;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+            transform: translateY(-2px);
+        }
+        .btn-passkey {
+            background: transparent;
+            color: white;
+            border: 1px solid #333;
+            margin-top: 1rem;
+        }
+        .btn-passkey:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #555;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .text-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        .text-link:hover {
+            color: #a78bfa;
+            text-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+        }
+
+        /* Modal & Toast */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .toast {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast-error { border-left: 4px solid #ef4444; }
+        .toast-success { border-left: 4px solid #22c55e; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (simplified for auth page) -->
+    <nav class="navbar" style="position: absolute; top: 0; width: 100%; padding: 1.5rem 2rem; z-index: 50;">
+        <a href="/" class="text-link" style="display: flex; align-items: center; gap: 0.5rem; color: white; font-weight: 600; font-size: 1.2rem;">
+            <i data-lucide="gamepad-2"></i> Campus Clone
+        </a>
+    </nav>
+
+    <!-- Background Particles -->
+    <div class="particles">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="auth-wrapper">
+        <div class="brand-header">
+            <div class="brand-logo">
+                <i data-lucide="graduation-cap"></i>
+            </div>
+            <h1 class="text-glow" style="font-size: 1.75rem; margin-bottom: 0.25rem;">GL Bajaj Institute</h1>
+            <p style="color: #B5B5B5; font-size: 0.9rem;">MPIA Campus Network</p>
+        </div>
+
+        <div class="auth-card card-glass card-3d">
+            <div class="tabs">
+                <div class="tab active" data-target="login">LOGIN</div>
+                <div class="tab" data-target="register">REGISTER</div>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" class="form-section active">
+                <div class="input-group">
+                    <label>College Email</label>
+                    <i data-lucide="mail" class="input-icon"></i>
+                    <input type="email" id="login-email" class="input-field" placeholder="student@glbitm.ac.in" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <i data-lucide="lock" class="input-icon"></i>
+                    <input type="password" id="login-password" class="input-field" placeholder="••••••••" required>
+                    <i data-lucide="eye" class="password-toggle" onclick="togglePassword('login-password', this)"></i>
+                </div>
+
+                <div class="flex-between">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; color: #B5B5B5; cursor: pointer;">
+                        <input type="checkbox" id="remember-me" style="accent-color: var(--accent-primary);"> Remember Me
+                    </label>
+                    <a class="text-link" onclick="openForgotModal()">Forgot Password?</a>
+                </div>
+
+                <div class="human-check" id="login-human" onclick="verifyHuman('login-human')">
+                    <div class="check-box"><i data-lucide="check"></i></div>
+                    <span style="color: #B5B5B5;">I am human</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary ripple-effect">
+                    <i data-lucide="log-in"></i> Access Terminal
+                </button>
+                
+                <button type="button" class="btn btn-passkey" onclick="loginWithPasskey()">
+                    <i data-lucide="fingerprint"></i> Login with Passkey
+                </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="register-form" class="form-section">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="reg-name" class="input-field" placeholder="John Doe" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Student ID</label>
+                        <i data-lucide="hash" class="input-icon"></i>
+                        <input type="text" id="reg-id" class="input-field" placeholder="GLB001" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>College Email</label>
+                    <i data-lucide="mail" class="input-icon"></i>
+                    <input type="email" id="reg-email" class="input-field" placeholder="student@glbitm.ac.in" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>Branch</label>
+                        <select id="reg-branch" class="input-field" style="padding-left: 1rem; cursor: pointer;" required>
+                            <option value="">Select Branch</option>
+                            <option value="CSE">CSE</option>
+                            <option value="IT">IT</option>
+                            <option value="ECE">ECE</option>
+                            <option value="ME">ME</option>
+                            <option value="CE">CE</option>
+                            <option value="EE">EE</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Year</label>
+                        <select id="reg-year" class="input-field" style="padding-left: 1rem; cursor: pointer;" required>
+                            <option value="">Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <i data-lucide="lock" class="input-icon"></i>
+                    <input type="password" id="reg-password" class="input-field" placeholder="••••••••" required onkeyup="checkStrength(this.value)">
+                    <i data-lucide="eye" class="password-toggle" onclick="togglePassword('reg-password', this)"></i>
+                    <div class="pwd-strength" id="pwd-bar-container"><div class="pwd-fill" id="pwd-bar"></div></div>
+                    <div class="pwd-text" id="pwd-text">Strength: Weak</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <i data-lucide="lock-keyhole" class="input-icon"></i>
+                    <input type="password" id="reg-confirm" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <div class="human-check" id="reg-human" onclick="verifyHuman('reg-human')">
+                    <div class="check-box"><i data-lucide="check"></i></div>
+                    <span style="color: #B5B5B5;">I am human</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary ripple-effect">
+                    <i data-lucide="user-plus"></i> Initialize Account
+                </button>
+            </form>
+        </div>
+        
+        <div style="margin-top: 2rem; text-align: center;">
+            <a href="/" class="text-link" style="color: #7D7D7D;"><i data-lucide="arrow-left" style="width: 14px; display: inline-block; vertical-align: middle;"></i> Return to Homepage</a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgot-modal">
+        <div class="modal">
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">Reset Protocol</h3>
+            <p style="color: #B5B5B5; font-size: 0.875rem; margin-bottom: 1.5rem;">Enter your GL Bajaj email to receive a reset link.</p>
+            
+            <div class="input-group">
+                <i data-lucide="mail" class="input-icon"></i>
+                <input type="email" id="reset-email" class="input-field" placeholder="student@glbitm.ac.in">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn" style="background: #333; color: white;" onclick="closeForgotModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="sendResetLink()">Send Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>lucide.createIcons();</script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

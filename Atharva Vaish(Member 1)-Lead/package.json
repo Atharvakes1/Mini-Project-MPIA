@@ -1,18 +1,20 @@
 {
-  "name": "mini-project-mpia",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "campus-clone-mpia",
+  "version": "2.0.0",
+  "description": "Campus Clone - MPIA: Interactive college campus platform for GL Bajaj Institute",
+  "main": "server.js",
   "scripts": {
-  "start": "node server.js",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
-  "keywords": [],
-  "author": "",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["campus", "college", "chat", "gl-bajaj", "mpia"],
+  "author": "Team MPIA",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1",
+    "multer": "^1.4.5-lts.2",
     "socket.io": "^4.8.3"
   }
 }

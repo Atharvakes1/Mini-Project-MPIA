@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Clone - GL Bajaj Campus Hub</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        /* Specific page styles using theme variables */
+        body { background-color: var(--bg-primary, #090909); color: var(--text-primary, #ffffff); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .mouse-glow { position: fixed; top: 0; left: 0; width: 400px; height: 400px; background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(124, 58, 237, 0) 70%); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: transform 0.1s ease-out; }
+        
+        /* Hero */
+        .hero-section { min-height: 100vh; display: flex; align-items: center; position: relative; padding-top: 80px; overflow: hidden; }
+        .hero-content { z-index: 10; }
+        .hero-3d-container { position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 60%; height: 80vh; z-index: 5; pointer-events: none; }
+        #three-canvas { width: 100%; height: 100%; outline: none; }
+        
+        /* Marquee */
+        .marquee-container { overflow: hidden; background: var(--bg-secondary, #111111); padding: 1.5rem 0; border-top: 1px solid rgba(124, 58, 237, 0.2); border-bottom: 1px solid rgba(124, 58, 237, 0.2); display: flex; white-space: nowrap; }
+        .marquee-content { display: inline-flex; animation: marquee 20s linear infinite; }
+        .marquee-item { display: inline-flex; align-items: center; margin: 0 2rem; font-weight: 700; font-size: 1.25rem; color: var(--text-secondary, #B5B5B5); text-transform: uppercase; letter-spacing: 2px; }
+        .marquee-dot { width: 8px; height: 8px; background-color: var(--accent-primary, #7C3AED); border-radius: 50%; margin-left: 2rem; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        /* Features */
+        .features-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: center; margin-top: 4rem; }
+        .phone-mockup { width: 300px; height: 600px; background: var(--bg-secondary, #111111); border-radius: 40px; border: 8px solid #222; box-shadow: 0 0 50px rgba(124, 58, 237, 0.2); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .phone-mockup::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 25px; background: #222; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
+        .feature-btn { display: flex; align-items: flex-start; gap: 1rem; padding: 1.5rem; border-radius: 1rem; cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent; text-align: left; background: transparent; color: inherit; width: 100%; }
+        .feature-btn:hover, .feature-btn.active { background: rgba(124, 58, 237, 0.1); border-color: rgba(124, 58, 237, 0.3); }
+        .feature-icon { background: rgba(124, 58, 237, 0.2); color: var(--accent-primary, #7C3AED); padding: 0.75rem; border-radius: 0.75rem; }
+        
+        /* Campus Life SVG Area */
+        .campus-illustration { position: relative; width: 100%; height: 400px; background: radial-gradient(circle at center, rgba(124,58,237,0.1) 0%, transparent 70%); border-radius: 2rem; overflow: hidden; }
+        .floating-bubble { position: absolute; background: rgba(17, 17, 17, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(124,58,237,0.3); padding: 1rem; border-radius: 1rem; display: flex; align-items: center; gap: 0.75rem; animation: float 6s ease-in-out infinite; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .floating-bubble:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-bubble:nth-child(2) { top: 40%; right: 15%; animation-delay: 2s; }
+        .floating-bubble:nth-child(3) { bottom: 25%; left: 30%; animation-delay: 4s; }
+        
+        /* Steps */
+        .step-card { text-align: center; position: relative; }
+        .step-number { font-size: 6rem; font-weight: 900; color: rgba(124, 58, 237, 0.1); position: absolute; top: -3rem; left: 50%; transform: translateX(-50%); z-index: -1; line-height: 1; }
+        
+        /* Testimonials */
+        .testimonial-carousel { position: relative; overflow: hidden; padding: 2rem 0; }
+        .testimonial-slide { display: none; text-align: center; padding: 2rem; background: var(--bg-secondary, #111111); border-radius: 1.5rem; border: 1px solid rgba(124,58,237,0.2); }
+        .testimonial-slide.active { display: block; animation: fadeIn 0.5s ease-out; }
+        .dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; cursor: pointer; }
+        .dot.active { background: var(--accent-primary, #7C3AED); box-shadow: 0 0 10px var(--accent-primary, #7C3AED); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* FAQ */
+        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        @media (max-width: 768px) { .faq-grid, .features-grid { grid-template-columns: 1fr; } .hero-3d-container { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="mouse-glow"></div>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-inner sticky top-0 z-50 backdrop-blur-md bg-opacity-80 bg-[#090909] border-b border-[#222]">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#4C1D95] flex items-center justify-center shadow-lg shadow-[#7C3AED]/30">
+                    <i data-lucide="layers" class="text-white w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">Campus Clone</h1>
+                    <p class="text-[10px] text-[#7C3AED] font-semibold uppercase tracking-wider">GL Bajaj Campus Hub</p>
+                </div>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-white transition-colors">Features</a>
+                <a href="#why-us" class="hover:text-white transition-colors">Why Us</a>
+                <a href="#events" class="hover:text-white transition-colors">Events</a>
+                <div class="relative group cursor-pointer dropdown-toggle">
+                    <span class="flex items-center gap-1 hover:text-white transition-colors">Services <i data-lucide="chevron-down" class="w-4 h-4"></i></span>
+                    <div class="absolute top-full left-0 mt-2 w-48 bg-[#111] border border-[#222] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2">
+                        <a href="#" class="block px-4 py-2 hover:bg-[#222] rounded-lg">Study Materials</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-[#222] rounded-lg">Lost & Found</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-[#222] rounded-lg">Carpooling</a>
+                    </div>
+                </div>
+                <a href="#faq" class="hover:text-white transition-colors">FAQs</a>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-4">
+                <button class="btn btn-outline border-[#333] hover:border-[#7C3AED] text-sm px-4 py-2 rounded-lg ripple-effect flex items-center gap-2">
+                    <i data-lucide="play-circle" class="w-4 h-4"></i> Watch Features
+                </button>
+                <button class="btn btn-primary bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm px-5 py-2 rounded-lg shadow-lg shadow-[#7C3AED]/20 ripple-effect">
+                    Dashboard
+                </button>
+            </div>
+            
+            <button class="md:hidden text-white" id="mobile-menu-btn">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section container mx-auto px-6">
+        <div class="hero-content w-full md:w-1/2 animate-on-scroll anim-fade-in-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/30 text-[#7C3AED] text-sm font-semibold mb-6">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                Now Live at GL Bajaj
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight mb-6">
+                Your entire college life, <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#C084FC]">connected in one app.</span>
+            </h1>
+            
+            <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
+                Connect with peers, join clubs, find events, and manage your campus life securely with your GLBITM email. The ultimate hub for GL Bajaj students.
+            </p>
+            
+            <div class="flex flex-wrap items-center gap-4">
+                <button class="btn btn-primary bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-8 py-4 rounded-xl font-semibold shadow-lg shadow-[#7C3AED]/30 ripple-effect flex items-center gap-2 text-lg">
+                    Get Started <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+                <button class="btn btn-secondary bg-[#222] hover:bg-[#333] text-white px-8 py-4 rounded-xl font-semibold ripple-effect flex items-center gap-2 text-lg border border-[#333]">
+                    <i data-lucide="play" class="w-5 h-5"></i> Watch Features
+                </button>
+                <button class="btn btn-outline border-transparent hover:text-[#7C3AED] text-gray-300 px-6 py-4 rounded-xl font-medium ripple-effect">
+                    Learn More
+                </button>
+            </div>
+            
+            <div class="mt-12 flex items-center gap-4 text-sm text-gray-500 font-medium">
+                <div class="flex -space-x-3">
+                    <img src="https://i.pravatar.cc/100?img=1" class="w-10 h-10 rounded-full border-2 border-[#090909]">
+                    <img src="https://i.pravatar.cc/100?img=2" class="w-10 h-10 rounded-full border-2 border-[#090909]">
+                    <img src="https://i.pravatar.cc/100?img=3" class="w-10 h-10 rounded-full border-2 border-[#090909]">
+                    <div class="w-10 h-10 rounded-full border-2 border-[#090909] bg-[#222] flex items-center justify-center text-xs">+2k</div>
+                </div>
+                <p>Joined by 2000+ GL Bajaj students</p>
+            </div>
+        </div>
+        
+        <div class="hero-3d-container">
+            <canvas id="three-canvas"></canvas>
+        </div>
+    </section>
+
+    <!-- Campus Marquee -->
+    <div class="marquee-container">
+        <div class="marquee-content" id="marquee-content">
+            <div class="marquee-item">CSE Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">IT Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">ECE Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">ME Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">CE Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">EE Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">MBA Dept<div class="marquee-dot"></div></div>
+            <div class="marquee-item">MCA Dept<div class="marquee-dot"></div></div>
+            <!-- Duplicated for seamless loop will be handled by JS -->
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="section container mx-auto px-6 py-24">
+        <div class="text-center mb-16 animate-on-scroll anim-fade-in-up">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">Everything you need,<br>in one pocket dashboard</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg">Designed specifically for the GL Bajaj ecosystem, bringing all your campus needs into a single, unified experience.</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Left Features -->
+            <div class="flex flex-col gap-4 animate-on-scroll stagger-1">
+                <button class="feature-btn active" data-feature="feed">
+                    <div class="feature-icon"><i data-lucide="layout-list"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">College Feed</h3>
+                        <p class="text-sm text-gray-400">Stay updated with campus news</p>
+                    </div>
+                </button>
+                <button class="feature-btn" data-feature="forums">
+                    <div class="feature-icon"><i data-lucide="message-square"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Student Forums</h3>
+                        <p class="text-sm text-gray-400">Discuss courses and projects</p>
+                    </div>
+                </button>
+                <button class="feature-btn" data-feature="chat">
+                    <div class="feature-icon"><i data-lucide="message-circle"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Group Chats</h3>
+                        <p class="text-sm text-gray-400">Coordinate with your batch</p>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Center Phone Mockup -->
+            <div class="phone-mockup animate-on-scroll anim-pop-in">
+                <div class="absolute inset-0 bg-[#090909] m-2 rounded-[32px] overflow-hidden flex flex-col p-4 border border-[#222]">
+                    <!-- Mockup Header -->
+                    <div class="flex justify-between items-center mt-6 mb-4">
+                        <div class="text-lg font-bold">Campus Feed</div>
+                        <i data-lucide="bell" class="w-5 h-5 text-gray-400"></i>
+                    </div>
+                    <!-- Mockup Content -->
+                    <div class="flex-1 overflow-hidden flex flex-col gap-4" id="mockup-content">
+                        <div class="bg-[#111] p-3 rounded-xl border border-[#222]">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20"></div>
+                                <div><div class="h-3 w-20 bg-[#333] rounded"></div><div class="h-2 w-12 bg-[#222] rounded mt-1"></div></div>
+                            </div>
+                            <div class="h-16 bg-[#222] rounded-lg w-full"></div>
+                        </div>
+                        <div class="bg-[#111] p-3 rounded-xl border border-[#222]">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 rounded-full bg-purple-500/20"></div>
+                                <div><div class="h-3 w-24 bg-[#333] rounded"></div><div class="h-2 w-16 bg-[#222] rounded mt-1"></div></div>
+                            </div>
+                            <div class="h-20 bg-[#222] rounded-lg w-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Features -->
+            <div class="flex flex-col gap-4 animate-on-scroll stagger-2">
+                <button class="feature-btn" data-feature="events">
+                    <div class="feature-icon"><i data-lucide="calendar"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Event Hub</h3>
+                        <p class="text-sm text-gray-400">Discover fests and workshops</p>
+                    </div>
+                </button>
+                <button class="feature-btn" data-feature="reels">
+                    <div class="feature-icon"><i data-lucide="film"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Reels & Media</h3>
+                        <p class="text-sm text-gray-400">Share campus moments</p>
+                    </div>
+                </button>
+                <button class="feature-btn" data-feature="ai">
+                    <div class="feature-icon"><i data-lucide="bot"></i></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">AI Assistant</h3>
+                        <p class="text-sm text-gray-400">Smart help for queries</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campus Life Animation -->
+    <section class="section container mx-auto px-6 py-12">
+        <div class="campus-illustration animate-on-scroll anim-fade-in-up flex items-center justify-center">
+            <!-- Central Hub representation -->
+            <div class="w-32 h-32 rounded-full bg-gradient-to-tr from-[#7C3AED] to-[#3B82F6] opacity-20 blur-2xl absolute"></div>
+            
+            <div class="floating-bubble">
+                <img src="https://i.pravatar.cc/100?img=4" class="w-8 h-8 rounded-full">
+                <div>
+                    <p class="text-xs font-bold">Rahul (CSE)</p>
+                    <p class="text-xs text-gray-400">Anyone up for hackathon?</p>
+                </div>
+            </div>
+            
+            <div class="floating-bubble">
+                <div class="w-8 h-8 rounded-full bg-[#7C3AED]/20 flex items-center justify-center text-[#7C3AED]"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                <div>
+                    <p class="text-xs font-bold">Tech Club</p>
+                    <p class="text-xs text-gray-400">Workshop starts at 5 PM</p>
+                </div>
+            </div>
+            
+            <div class="floating-bubble">
+                <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full">
+                <div>
+                    <p class="text-xs font-bold">Priya (IT)</p>
+                    <p class="text-xs text-gray-400">Shared OS notes 📚</p>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white z-10 text-center">A living, breathing<br><span class="text-[#7C3AED]">digital campus</span></h3>
+        </div>
+    </section>
+
+    <!-- Security & Trust -->
+    <section class="section container mx-auto px-6 py-24 border-t border-[#222]">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-[#111] p-8 rounded-2xl border border-[#222] hover:border-[#7C3AED]/50 transition-colors animate-on-scroll stagger-1">
+                <div class="w-14 h-14 rounded-xl bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center mb-6">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Student Verification</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Exclusive access using @glbitm.ac.in email ensures a safe, troll-free environment just for actual students.</p>
+            </div>
+            
+            <div class="bg-[#111] p-8 rounded-2xl border border-[#222] hover:border-[#7C3AED]/50 transition-colors animate-on-scroll stagger-2">
+                <div class="w-14 h-14 rounded-xl bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center mb-6">
+                    <i data-lucide="lock" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">End-to-End Encryption</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Your private DMs are secured. We prioritize your privacy so you can chat freely without worries.</p>
+            </div>
+            
+            <div class="bg-[#111] p-8 rounded-2xl border border-[#222] hover:border-[#7C3AED]/50 transition-colors animate-on-scroll stagger-3">
+                <div class="w-14 h-14 rounded-xl bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center mb-6">
+                    <i data-lucide="ghost" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Anonymous Mode</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Share confessions or ask silly doubts without revealing your identity in specific anonymous forums.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section container mx-auto px-6 py-24 bg-[#111]/50 rounded-[3rem] my-12">
+        <div class="text-center mb-20 animate-on-scroll">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">Join in 3 Simple Steps</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-12 relative">
+            <!-- Connecting line -->
+            <div class="hidden md:block absolute top-1/2 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-transparent via-[#7C3AED]/50 to-transparent -z-10"></div>
+            
+            <div class="step-card animate-on-scroll stagger-1">
+                <div class="step-number">01</div>
+                <div class="w-20 h-20 mx-auto rounded-2xl bg-[#090909] border-2 border-[#333] flex items-center justify-center mb-6 shadow-xl">
+                    <i data-lucide="user-plus" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Sign Up</h3>
+                <p class="text-gray-400 text-sm">Download the app or visit the web portal to create your profile.</p>
+            </div>
+            
+            <div class="step-card animate-on-scroll stagger-2">
+                <div class="step-number">02</div>
+                <div class="w-20 h-20 mx-auto rounded-2xl bg-[#090909] border-2 border-[#7C3AED] flex items-center justify-center mb-6 shadow-xl shadow-[#7C3AED]/20">
+                    <i data-lucide="mail" class="w-8 h-8 text-[#7C3AED]"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Verify Student ID</h3>
+                <p class="text-gray-400 text-sm">Authenticate using your official GLBITM email address.</p>
+            </div>
+            
+            <div class="step-card animate-on-scroll stagger-3">
+                <div class="step-number">03</div>
+                <div class="w-20 h-20 mx-auto rounded-2xl bg-[#090909] border-2 border-[#333] flex items-center justify-center mb-6 shadow-xl">
+                    <i data-lucide="users" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Join Community</h3>
+                <p class="text-gray-400 text-sm">Dive into feeds, join your department group, and start connecting.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section container mx-auto px-6 py-24">
+        <h2 class="text-3xl font-bold text-center mb-12 animate-on-scroll">What Students Say</h2>
+        
+        <div class="max-w-3xl mx-auto testimonial-carousel animate-on-scroll">
+            <div class="testimonial-slide active">
+                <div class="text-[#7C3AED] mb-4 flex justify-center"><i data-lucide="quote" class="w-10 h-10"></i></div>
+                <p class="text-xl md:text-2xl font-medium mb-8 leading-relaxed">"This app changed how we coordinate for our minor projects. The dedicated group chats and file sharing are so much better than WhatsApp."</p>
+                <div class="flex items-center justify-center gap-4">
+                    <img src="https://i.pravatar.cc/100?img=6" class="w-12 h-12 rounded-full">
+                    <div class="text-left">
+                        <h4 class="font-bold">Aman Sharma</h4>
+                        <p class="text-sm text-gray-400">CSE, 3rd Year</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-slide">
+                <div class="text-[#7C3AED] mb-4 flex justify-center"><i data-lucide="quote" class="w-10 h-10"></i></div>
+                <p class="text-xl md:text-2xl font-medium mb-8 leading-relaxed">"I used to miss out on so many tech club events because I didn't check the notice board. Now the Event Hub keeps me updated."</p>
+                <div class="flex items-center justify-center gap-4">
+                    <img src="https://i.pravatar.cc/100?img=9" class="w-12 h-12 rounded-full">
+                    <div class="text-left">
+                        <h4 class="font-bold">Neha Gupta</h4>
+                        <p class="text-sm text-gray-400">IT, 2nd Year</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-slide">
+                <div class="text-[#7C3AED] mb-4 flex justify-center"><i data-lucide="quote" class="w-10 h-10"></i></div>
+                <p class="text-xl md:text-2xl font-medium mb-8 leading-relaxed">"The anonymous confessions page is hilarious, but I appreciate that the actual academic forums are strictly moderated and helpful."</p>
+                <div class="flex items-center justify-center gap-4">
+                    <img src="https://i.pravatar.cc/100?img=11" class="w-12 h-12 rounded-full">
+                    <div class="text-left">
+                        <h4 class="font-bold">Karan Singh</h4>
+                        <p class="text-sm text-gray-400">ECE, 4th Year</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dots" id="testimonial-dots">
+                <div class="dot active" data-index="0"></div>
+                <div class="dot" data-index="1"></div>
+                <div class="dot" data-index="2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section container mx-auto px-6 py-24 border-t border-[#222]">
+        <div class="faq-grid">
+            <div class="animate-on-scroll">
+                <h2 class="text-3xl md:text-5xl font-bold mb-6">Got Questions?</h2>
+                <p class="text-gray-400 text-lg mb-8 max-w-md">We've compiled everything you need to know about Campus Clone. If you can't find your answer, our AI Assistant is here to help.</p>
+                <button class="btn btn-outline border-[#333] hover:border-[#7C3AED] px-6 py-3 rounded-xl ripple-effect flex items-center gap-2">
+                    Ask AI Assistant <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-4 animate-on-scroll">
+                <!-- Accordion Items -->
+                <div class="border border-[#222] bg-[#111] rounded-xl overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center accordion-trigger focus:outline-none">
+                        Is it only for GL Bajaj students?
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content hidden px-6 pb-5 text-gray-400 text-sm leading-relaxed">
+                        Yes, currently the platform is exclusive to GL Bajaj Institute of Technology and Management. You need a valid @glbitm.ac.in email address to verify your account and access the community.
+                    </div>
+                </div>
+                
+                <div class="border border-[#222] bg-[#111] rounded-xl overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center accordion-trigger focus:outline-none">
+                        How is my data protected?
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content hidden px-6 pb-5 text-gray-400 text-sm leading-relaxed">
+                        We use end-to-end encryption for all Direct Messages. Your password and personal data are hashed and securely stored. We never share student data with third parties.
+                    </div>
+                </div>
+                
+                <div class="border border-[#222] bg-[#111] rounded-xl overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center accordion-trigger focus:outline-none">
+                        Can I use it anonymously?
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content hidden px-6 pb-5 text-gray-400 text-sm leading-relaxed">
+                        We have a dedicated 'Anonymous Mode' for specific confession boards and doubt forums where you can post without revealing your identity. However, your main profile and DMs are tied to your verified student identity.
+                    </div>
+                </div>
+                
+                <div class="border border-[#222] bg-[#111] rounded-xl overflow-hidden accordion-item">
+                    <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center accordion-trigger focus:outline-none">
+                        Is there a desktop version?
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content hidden px-6 pb-5 text-gray-400 text-sm leading-relaxed">
+                        Yes! Campus Clone is a fully responsive web application that works seamlessly on desktop browsers, tablets, and mobile phones.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#090909] border-t border-[#222] py-12 mt-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="md:col-span-1">
+                    <a href="/" class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-[#7C3AED] flex items-center justify-center">
+                            <i data-lucide="layers" class="text-white w-5 h-5"></i>
+                        </div>
+                        <span class="font-bold text-lg">Campus Clone</span>
+                    </a>
+                    <p class="text-sm text-gray-400 mb-6">The definitive digital campus experience for GL Bajaj students.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Platform</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Events Hub</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Student Clubs</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Reels & Media</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">AI Assistant</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Report Issue</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Contact Admin</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-[#7C3AED] transition-colors">Community Guidelines</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-[#222] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+                <p>&copy; 2024 Campus Clone - MPIA. All rights reserved.</p>
+                <p class="flex items-center gap-1">Built with <i data-lucide="heart" class="w-4 h-4 text-red-500"></i> by Atharva Vaish & Team</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Audio Effects -->
+    <audio id="sound-click" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+    <audio id="sound-whoosh" src="https://www.soundjay.com/misc/sounds/wind-swoosh-1.mp3" preload="auto"></audio>
+
+    <script src="/js/effects.js"></script>
+    <script src="/js/home.js"></script>
+</body>
+</html>

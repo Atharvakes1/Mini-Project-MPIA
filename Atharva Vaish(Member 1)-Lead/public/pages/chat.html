@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Campus Clone MPIA</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <style>
+        /* Chat specific styles */
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            background-color: var(--bg-primary, #090909);
+            color: var(--text-primary, #ffffff);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .chat-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .chat-sidebar {
+            background-color: var(--bg-secondary, #111111);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .search-container {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px 10px 10px 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted, #7D7D7D);
+        }
+
+        .chat-tabs {
+            display: flex;
+            padding: 10px 20px;
+            gap: 10px;
+            overflow-x: auto;
+        }
+
+        .chat-tab {
+            padding: 6px 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .chat-tab.active {
+            background-color: var(--accent-primary, #7C3AED);
+            color: white;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            display: flex;
+            padding: 15px 20px;
+            gap: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-item:hover, .chat-item.active {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-item.active {
+            border-left: 4px solid var(--accent-primary, #7C3AED);
+        }
+
+        .chat-item-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-primary, #7C3AED);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .chat-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .chat-item-title {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-item-time {
+            font-size: 0.75rem;
+            color: var(--text-muted, #7D7D7D);
+        }
+
+        .chat-item-message {
+            font-size: 0.85rem;
+            color: var(--text-secondary, #B5B5B5);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .unread-badge {
+            background-color: var(--accent-primary, #7C3AED);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            position: absolute;
+            top: 0;
+            right: -5px;
+        }
+
+        .fab-new-chat {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-primary, #7C3AED);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Main Chat */
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: var(--bg-secondary, #111111);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chat-header-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted, #7D7D7D);
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-header-actions i {
+            cursor: pointer;
+            color: var(--text-secondary, #B5B5B5);
+            transition: color 0.3s;
+        }
+
+        .chat-header-actions i:hover {
+            color: white;
+        }
+
+        .chat-wallpaper {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 80px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTIwIDIwTDBgM0wyMCA0MGg0MGwyMC0yMHoiIGZpbGw9IiMzMzMiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==');
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .messages-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1;
+        }
+
+        .msg-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            animation: msgSlideIn 0.3s ease forwards;
+        }
+
+        .msg-bubble-received {
+            align-self: flex-start;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-bubble-sent {
+            align-self: flex-end;
+            background-color: var(--accent-primary, #7C3AED);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+        }
+
+        .msg-sender {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #A78BFA;
+        }
+
+        .msg-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .msg-meta {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+            font-size: 0.65rem;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        .system-message {
+            align-self: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted, #7D7D7D);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            align-self: flex-start;
+            width: fit-content;
+            display: none;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #B5B5B5;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes msgSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input Area */
+        .chat-input-container {
+            padding: 15px 20px;
+            background-color: var(--bg-secondary, #111111);
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+        .input-actions i {
+            cursor: pointer;
+            color: var(--text-secondary, #B5B5B5);
+            transition: color 0.3s;
+        }
+
+        .input-actions i:hover {
+            color: white;
+        }
+
+        .chat-input-wrapper {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px;
+            resize: none;
+            max-height: 100px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .btn-send {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--accent-primary, #7C3AED);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-send:hover {
+            transform: scale(1.05);
+        }
+
+        /* Info Panel */
+        .chat-info-panel {
+            background-color: var(--bg-secondary, #111111);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .info-header {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--accent-primary, #7C3AED);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .info-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .info-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted, #7D7D7D);
+            margin-bottom: 15px;
+        }
+
+        .encryption-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #10B981;
+            background-color: rgba(16, 185, 129, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .info-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary, #B5B5B5);
+            cursor: pointer;
+            transition: color 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .info-action-btn:hover {
+            color: white;
+        }
+
+        .info-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-secondary, #B5B5B5);
+        }
+
+        .member-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .badge-admin { background-color: rgba(239, 68, 68, 0.2); color: #EF4444; }
+        .badge-mod { background-color: rgba(59, 130, 246, 0.2); color: #3B82F6; }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .media-item {
+            aspect-ratio: 1;
+            background-color: #333;
+            border-radius: 4px;
+        }
+
+        .danger-zone {
+            padding: 20px;
+        }
+
+        .btn-danger {
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px solid #EF4444;
+            color: #EF4444;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-danger:hover {
+            background-color: #EF4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-wrapper">
+        <!-- Minimal Navbar placeholder -->
+        <nav class="navbar" style="padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: bold; font-size: 1.2rem;"><span class="text-gradient">Campus</span> Clone</div>
+            <div><i data-lucide="bell"></i> <i data-lucide="user"></i></div>
+        </nav>
+
+        <div class="chat-layout">
+            <!-- LEFT SIDEBAR -->
+            <div class="chat-sidebar relative">
+                <div class="sidebar-header">
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600;">Chats</h2>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="chatSearch" placeholder="Search chats...">
+                    </div>
+                </div>
+
+                <div class="chat-tabs">
+                    <div class="chat-tab active" data-filter="all">All</div>
+                    <div class="chat-tab" data-filter="groups">Groups</div>
+                    <div class="chat-tab" data-filter="private">Private</div>
+                    <div class="chat-tab" data-filter="communities">Communities</div>
+                </div>
+
+                <div class="chat-list" id="chatList">
+                    <!-- Sample Chats -->
+                    <div class="chat-item active" data-type="communities" data-id="1">
+                        <div class="chat-item-avatar">CS<div class="unread-badge">3</div></div>
+                        <div class="chat-item-content">
+                            <div class="chat-item-header">
+                                <span class="chat-item-title">CSE-A Official</span>
+                                <span class="chat-item-time">10:42 AM</span>
+                            </div>
+                            <div class="chat-item-message">Prof. Sharma: Don't forget the assignment...</div>
+                        </div>
+                    </div>
+                    <div class="chat-item" data-type="groups" data-id="2">
+                        <div class="chat-item-avatar" style="background-color: #10B981;">CC</div>
+                        <div class="chat-item-content">
+                            <div class="chat-item-header">
+                                <span class="chat-item-title">Coding Club</span>
+                                <span class="chat-item-time">Yesterday</span>
+                            </div>
+                            <div class="chat-item-message">Rahul: Hackathon is starting soon!</div>
+                        </div>
+                    </div>
+                    <div class="chat-item" data-type="private" data-id="3">
+                        <div class="chat-item-avatar" style="background-color: #F59E0B;">B</div>
+                        <div class="chat-item-content">
+                            <div class="chat-item-header">
+                                <span class="chat-item-title">Bhavya (Private)</span>
+                                <span class="chat-item-time">Yesterday</span>
+                            </div>
+                            <div class="chat-item-message"><i data-lucide="lock" style="width:12px;height:12px;display:inline;"></i> Are we meeting at the library?</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fab-new-chat ripple-effect">
+                    <i data-lucide="message-square-plus"></i>
+                </div>
+            </div>
+
+            <!-- CENTER PANEL -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <div class="chat-item-avatar" style="width: 40px; height: 40px; font-size: 1rem;" id="activeChatAvatar">CS</div>
+                        <div>
+                            <div class="chat-header-title" id="activeChatName">CSE-A Official</div>
+                            <div class="chat-header-subtitle" id="activeChatMembers">124 members, 12 online</div>
+                        </div>
+                    </div>
+                    <div class="chat-header-actions">
+                        <i data-lucide="search" title="Search in chat"></i>
+                        <i data-lucide="phone" title="Voice call"></i>
+                        <i data-lucide="video" title="Video call"></i>
+                        <i data-lucide="more-vertical" title="More options"></i>
+                    </div>
+                </div>
+
+                <div class="chat-wallpaper"></div>
+
+                <div class="messages-area" id="messagesArea">
+                    <div class="system-message">Today</div>
+                    
+                    <div class="msg-bubble msg-bubble-received">
+                        <div class="msg-sender">Rahul Kumar</div>
+                        <div class="msg-text">Has anyone completed the OS assignment?</div>
+                        <div class="msg-meta">
+                            <span>10:30 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="msg-bubble msg-bubble-sent">
+                        <div class="msg-text">Almost done with it. I can share notes if you want.</div>
+                        <div class="msg-meta">
+                            <span>10:35 AM</span>
+                            <i data-lucide="check-check" style="width: 14px; height: 14px; color: #10B981;"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="input-actions">
+                        <i data-lucide="paperclip" id="attachBtn"></i>
+                        <i data-lucide="camera" id="cameraBtn"></i>
+                        <i data-lucide="mic" id="voiceBtn"></i>
+                    </div>
+                    <div class="chat-input-wrapper">
+                        <i data-lucide="smile" id="emojiBtn" style="cursor: pointer; color: #B5B5B5; margin-right: 10px;"></i>
+                        <textarea class="chat-input" id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+                        <i data-lucide="image" id="gifBtn" style="cursor: pointer; color: #B5B5B5; margin-left: 10px;"></i>
+                    </div>
+                    <button class="btn-send" id="sendBtn">
+                        <i data-lucide="send"></i>
+                    </button>
+                </div>
+                
+                <!-- Emoji Picker Container (injected via JS) -->
+                <div id="emojiPickerContainer"></div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="chat-info-panel">
+                <div class="info-header">
+                    <div class="info-avatar">CS</div>
+                    <div class="info-title">CSE-A Official</div>
+                    <div class="info-subtitle">Section A Students Official Group</div>
+                    <div class="encryption-status">
+                        <i data-lucide="lock" style="width: 12px; height: 12px;"></i> End-to-end encrypted
+                    </div>
+                </div>
+
+                <div class="info-actions-grid">
+                    <button class="info-action-btn">
+                        <i data-lucide="bell-off"></i> Mute
+                    </button>
+                    <button class="info-action-btn">
+                        <i data-lucide="search"></i> Search
+                    </button>
+                    <button class="info-action-btn">
+                        <i data-lucide="image"></i> Wallpaper
+                    </button>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">Members (124)</div>
+                    <div class="member-list">
+                        <div class="member-item">
+                            <div class="member-avatar">PS</div>
+                            <div class="member-info">
+                                <div class="member-name">Prof. Sharma</div>
+                            </div>
+                            <span class="badge badge-admin">Admin</span>
+                        </div>
+                        <div class="member-item">
+                            <div class="member-avatar">RK</div>
+                            <div class="member-info">
+                                <div class="member-name">Rahul Kumar</div>
+                            </div>
+                            <span class="badge badge-mod">Mod</span>
+                        </div>
+                        <div class="member-item">
+                            <div class="member-avatar">You</div>
+                            <div class="member-info">
+                                <div class="member-name">You</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">Shared Media (24)</div>
+                    <div class="media-grid">
+                        <div class="media-item"></div>
+                        <div class="media-item"></div>
+                        <div class="media-item"></div>
+                        <div class="media-item"></div>
+                        <div class="media-item"></div>
+                        <div class="media-item"></div>
+                    </div>
+                </div>
+
+                <div class="danger-zone">
+                    <button class="btn-danger" style="margin-bottom: 10px; border-color: var(--text-muted); color: var(--text-primary);">
+                        <i data-lucide="archive"></i> Archive Chat
+                    </button>
+                    <button class="btn-danger">
+                        <i data-lucide="log-out"></i> Report & Exit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/emoji-picker.js"></script>
+    <script src="/js/chat.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

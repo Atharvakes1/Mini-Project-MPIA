@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events & Clubs | Campus Clone</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body class="bg-primary text-primary">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-inner container flex items-center justify-between">
+            <a href="feed.html" class="flex items-center gap-2">
+                <i data-lucide="graduation-cap" class="text-accent-primary"></i>
+                <span class="text-gradient font-bold text-xl">Campus Clone</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="feed.html" class="nav-link"><i data-lucide="home"></i></a>
+                <a href="events.html" class="nav-link active"><i data-lucide="calendar"></i></a>
+                <a href="chat.html" class="nav-link"><i data-lucide="message-square"></i></a>
+                <button class="btn btn-primary btn-sm" id="btn-create-event">Create Event</button>
+                <div class="avatar avatar-sm">
+                    <img src="https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff" alt="User Avatar">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container section">
+        <!-- Hero Section -->
+        <header class="section-header text-center mb-8 animate-on-scroll">
+            <h1 class="text-3xl font-bold text-gradient mb-2">Campus Events & Clubs</h1>
+            <p class="text-secondary text-lg">Never miss a fest, club meetup, or campus happening</p>
+            
+            <div class="mt-6 flex flex-col md:flex-row items-center justify-center gap-4">
+                <div class="input-group w-full md:w-96">
+                    <i data-lucide="search" class="input-icon"></i>
+                    <input type="text" id="event-search" class="input-field" placeholder="Search events or clubs...">
+                </div>
+                <div class="flex gap-2 overflow-x-auto max-w-full pb-2" id="event-date-filters">
+                    <button class="btn btn-primary btn-sm filter-btn active whitespace-nowrap" data-filter="all">All</button>
+                    <button class="btn btn-outline btn-sm filter-btn whitespace-nowrap" data-filter="today">Today</button>
+                    <button class="btn btn-outline btn-sm filter-btn whitespace-nowrap" data-filter="week">This Week</button>
+                    <button class="btn btn-outline btn-sm filter-btn whitespace-nowrap" data-filter="month">This Month</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Events Section -->
+        <section class="mb-12 animate-on-scroll stagger-1">
+            <div class="flex items-center justify-between mb-6 border-b border-gray-800 pb-2">
+                <div class="flex gap-4 overflow-x-auto max-w-full pb-2" id="event-tabs">
+                    <button class="tab-btn active text-lg font-medium pb-2 border-b-2 border-accent-primary whitespace-nowrap" data-tab="upcoming">Upcoming Events</button>
+                    <button class="tab-btn text-lg font-medium text-secondary pb-2 border-b-2 border-transparent hover:text-primary transition whitespace-nowrap" data-tab="past">Past Events</button>
+                    <button class="tab-btn text-lg font-medium text-secondary pb-2 border-b-2 border-transparent hover:text-primary transition whitespace-nowrap" data-tab="rsvps">My RSVPs</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="events-grid">
+                <!-- Events will be populated here by JS -->
+            </div>
+        </section>
+
+        <!-- Clubs Directory Section -->
+        <section class="mb-12 animate-on-scroll stagger-2">
+            <header class="mb-6 flex flex-col md:flex-row items-center justify-between">
+                <h2 class="text-2xl font-bold text-glow">Student Clubs & Communities</h2>
+                <div class="flex gap-2 overflow-x-auto pb-2 mt-4 md:mt-0 max-w-full" id="club-category-filters">
+                    <button class="btn btn-sm btn-primary filter-btn active whitespace-nowrap" data-category="all">All</button>
+                    <button class="btn btn-sm btn-outline filter-btn whitespace-nowrap" data-category="Technical">Technical</button>
+                    <button class="btn btn-sm btn-outline filter-btn whitespace-nowrap" data-category="Cultural">Cultural</button>
+                    <button class="btn btn-sm btn-outline filter-btn whitespace-nowrap" data-category="Sports">Sports</button>
+                    <button class="btn btn-sm btn-outline filter-btn whitespace-nowrap" data-category="Literary">Literary</button>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="clubs-grid">
+                <!-- Clubs will be populated here by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Create Event Modal -->
+    <div id="create-event-modal" class="modal-overlay hidden">
+        <div class="modal card card-glass w-full max-w-lg mx-4 relative">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Create Event</h2>
+                <button class="btn-icon modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <form id="create-event-form" class="flex flex-col gap-4">
+                <div class="input-group flex-col items-start gap-1">
+                    <label class="label-sm">Event Name</label>
+                    <input type="text" class="input-field w-full" required>
+                </div>
+                <div class="input-group flex-col items-start gap-1">
+                    <label class="label-sm">Description</label>
+                    <textarea class="input-field w-full" rows="3" required></textarea>
+                </div>
+                <div class="flex gap-4">
+                    <div class="input-group flex-col items-start gap-1 w-1/2">
+                        <label class="label-sm">Date</label>
+                        <input type="date" class="input-field w-full" required>
+                    </div>
+                    <div class="input-group flex-col items-start gap-1 w-1/2">
+                        <label class="label-sm">Time</label>
+                        <input type="time" class="input-field w-full" required>
+                    </div>
+                </div>
+                <div class="input-group flex-col items-start gap-1">
+                    <label class="label-sm">Location</label>
+                    <input type="text" class="input-field w-full" required>
+                </div>
+                <div class="input-group flex-col items-start gap-1">
+                    <label class="label-sm">Club</label>
+                    <select class="input-field w-full bg-bg-secondary" required>
+                        <option value="Coding Club">Coding Club</option>
+                        <option value="Cultural Committee">Cultural Committee</option>
+                        <option value="Sports Club">Sports Club</option>
+                        <option value="Photography Club">Photography Club</option>
+                        <option value="AI Club">AI Club</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-full mt-2">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div id="event-detail-modal" class="modal-overlay hidden">
+        <div class="modal card card-glass w-full max-w-2xl mx-4 p-0 overflow-hidden relative">
+            <div class="h-48 bg-gradient-to-r from-purple-600 to-indigo-600 relative">
+                <button class="btn-icon modal-close absolute top-3 right-3 bg-black/50 text-white hover:bg-black/80 rounded-full p-2"><i data-lucide="x"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-1" id="detail-title">Event Title</h2>
+                        <span class="badge badge-accent" id="detail-club">Club Name</span>
+                    </div>
+                    <div class="text-center bg-bg-secondary rounded p-2 min-w-[64px]">
+                        <div class="text-sm text-accent-primary font-bold" id="detail-month">MON</div>
+                        <div class="text-xl font-bold" id="detail-day">01</div>
+                    </div>
+                </div>
+                
+                <p class="text-secondary mb-6" id="detail-desc">Event description goes here...</p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="flex items-center gap-2 text-secondary">
+                        <i data-lucide="map-pin" class="text-accent-primary w-5 h-5"></i>
+                        <span id="detail-location">Location</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-secondary">
+                        <i data-lucide="clock" class="text-accent-primary w-5 h-5"></i>
+                        <span id="detail-time">Time</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-secondary col-span-2">
+                        <i data-lucide="users" class="text-accent-primary w-5 h-5"></i>
+                        <span id="detail-attendees">0 Attendees</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-4 border-t border-gray-800 pt-6">
+                    <button class="btn btn-primary flex-1" id="detail-rsvp-btn">RSVP Now</button>
+                    <button class="btn btn-outline flex-1 flex items-center justify-center gap-2" id="detail-calendar-btn"><i data-lucide="calendar-plus" class="w-4 h-4"></i> Add to Calendar</button>
+                    <button class="btn btn-icon btn-outline" id="detail-share-btn"><i data-lucide="share-2"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/events.js"></script>
+</body>
+</html>
