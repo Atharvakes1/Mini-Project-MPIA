@@ -1,0 +1,24 @@
+{
+  "name": "campusvibe-server",
+  "version": "1.0.0",
+  "description": "CampusVibe backend — Express + MongoDB + Socket.io",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0",
+    "socket.io": "^4.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "multer": "^1.4.5-lts.1",
+    "cloudinary": "^2.5.0",
+    "google-auth-library": "^9.14.0",
+    "@google/generative-ai": "^0.21.0"
+  }
+}
