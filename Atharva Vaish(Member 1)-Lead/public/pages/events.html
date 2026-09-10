@@ -7,32 +7,14 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/animations.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-primary text-primary">
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-inner container flex items-center justify-between">
-            <a href="feed.html" class="flex items-center gap-2">
-                <i data-lucide="graduation-cap" class="text-accent-primary"></i>
-                <span class="text-gradient font-bold text-xl">Campus Clone</span>
-            </a>
-            <div class="flex items-center gap-4">
-                <a href="feed.html" class="nav-link"><i data-lucide="home"></i></a>
-                <a href="events.html" class="nav-link active"><i data-lucide="calendar"></i></a>
-                <a href="chat.html" class="nav-link"><i data-lucide="message-square"></i></a>
-                <button class="btn btn-primary btn-sm" id="btn-create-event">Create Event</button>
-                <div class="avatar avatar-sm">
-                    <img src="https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff" alt="User Avatar">
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container section">
+<body style="background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body);">
+    <main class="container section" style="margin-top: 64px;">
         <!-- Hero Section -->
         <header class="section-header text-center mb-8 animate-on-scroll">
             <h1 class="text-3xl font-bold text-gradient mb-2">Campus Events & Clubs</h1>
@@ -178,5 +160,6 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="../js/events.js"></script>
+    <script src="/js/navbar.js"></script>
 </body>
 </html>

@@ -7,6 +7,14 @@ const crypto = require('crypto');
 
 const app = express();
 const server = http.createServer(app);
+
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ Unhandled Rejection:', reason);
+});
+
 const io = new Server(server, {
   maxHttpBufferSize: 5e6, // 5MB max for socket messages (images, files)
   cors: { origin: '*' }
@@ -488,21 +496,23 @@ io.on('connection', (socket) => {
 
   // ─── Typing Indicator ───
   socket.on('typing', (data) => {
-    if (data.room) {
-      socket.to(data.room).emit('typing', {
-        user: data.user || connectedUsers.get(socket.id)?.name || 'Someone',
-        room: data.room
+    const payload = data || {};
+    if (payload.room) {
+      socket.to(payload.room).emit('typing', {
+        user: payload.user || connectedUsers.get(socket.id)?.name || 'Someone',
+        room: payload.room
       });
     } else {
       socket.broadcast.emit('typing', {
-        user: data.user || connectedUsers.get(socket.id)?.name || 'Someone'
+        user: payload.user || connectedUsers.get(socket.id)?.name || 'Someone'
       });
     }
   });
 
   socket.on('stopTyping', (data) => {
-    if (data.room) {
-      socket.to(data.room).emit('stopTyping', { room: data.room });
+    const payload = data || {};
+    if (payload.room) {
+      socket.to(payload.room).emit('stopTyping', { room: payload.room });
     } else {
       socket.broadcast.emit('stopTyping', {});
     }
@@ -510,12 +520,14 @@ io.on('connection', (socket) => {
 
   // ─── Read Receipts ───
   socket.on('messageRead', (data) => {
+    if (!data) return;
     const { messageId, readBy } = data;
     io.emit('messageRead', { messageId, readBy });
   });
 
   // ─── Task Updates ───
   socket.on('taskUpdate', (task) => {
+    if (!task || !task.id) return;
     const idx = dataStore.tasks.findIndex(t => t.id === task.id);
     if (idx > -1) {
       dataStore.tasks[idx] = task;

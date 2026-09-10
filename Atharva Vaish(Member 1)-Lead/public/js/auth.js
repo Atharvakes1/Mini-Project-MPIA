@@ -121,19 +121,19 @@ window.checkStrength = function(password) {
     
     if (strength <= 1) {
         bar.style.width = '33%';
-        bar.style.backgroundColor = '#ef4444';
+        bar.style.backgroundColor = '#FF5577';
         text.innerText = 'Strength: Weak';
-        text.style.color = '#ef4444';
+        text.style.color = '#FF5577';
     } else if (strength === 2 || strength === 3) {
         bar.style.width = '66%';
-        bar.style.backgroundColor = '#eab308';
+        bar.style.backgroundColor = '#FFB020';
         text.innerText = 'Strength: Medium';
-        text.style.color = '#eab308';
+        text.style.color = '#FFB020';
     } else {
         bar.style.width = '100%';
-        bar.style.backgroundColor = '#22c55e';
+        bar.style.backgroundColor = '#00E080';
         text.innerText = 'Strength: Strong';
-        text.style.color = '#22c55e';
+        text.style.color = '#00E080';
     }
 };
 
@@ -148,14 +148,14 @@ window.verifyHuman = function(id) {
 
     const el = document.getElementById(id);
     const box = el.querySelector('.check-box');
-    const icon = box.querySelector('i');
+    const icon = box.querySelector('i, svg');
     
     box.classList.add('loading');
     
     setTimeout(() => {
         box.classList.remove('loading');
         box.classList.add('success');
-        icon.style.display = 'block';
+        if (icon) icon.style.display = 'block';
         verificationState[id] = true;
     }, 1500);
 };

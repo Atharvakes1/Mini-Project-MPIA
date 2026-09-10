@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
             music: 'Original Audio - campus_official',
             likes: 1245,
             comments: 89,
-            gradient: 'linear-gradient(45deg, #FF3366, #FF9933)'
+            gradient: 'linear-gradient(45deg, #FF6B35, #FFB020)'
         },
         {
             id: 'reel_2',
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             music: 'Trending Tech Beat - DJ Code',
             likes: 856,
             comments: 42,
-            gradient: 'linear-gradient(45deg, #7C3AED, #4338CA)'
+            gradient: 'linear-gradient(45deg, #00D4FF, #003366)'
         },
         {
             id: 'reel_3',
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             music: 'Viral Dance Mix 2026',
             likes: 2104,
             comments: 156,
-            gradient: 'linear-gradient(45deg, #10B981, #3B82F6)'
+            gradient: 'linear-gradient(45deg, #00E080, #0066FF)'
         },
         {
             id: 'reel_4',
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             music: 'Lofi Study Beats',
             likes: 543,
             comments: 112,
-            gradient: 'linear-gradient(45deg, #6B7280, #1F2937)'
+            gradient: 'linear-gradient(45deg, #1A2340, #131A2B)'
         },
         {
             id: 'reel_5',
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             music: 'Stadium Anthem - Sports Mix',
             likes: 3421,
             comments: 201,
-            gradient: 'linear-gradient(45deg, #F59E0B, #DC2626)'
+            gradient: 'linear-gradient(45deg, #FFD700, #FF5577)'
         }
     ];
 
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div class="reel-actions">
                     <button class="reel-action-btn btn-like ${isLiked ? 'liked' : ''}" data-id="${reel.id}">
-                        <i data-lucide="heart" style="fill: ${isLiked ? '#FF3366' : 'none'}; color: ${isLiked ? '#FF3366' : 'white'}"></i>
+                        <i data-lucide="heart" style="fill: ${isLiked ? '#FF6B35' : 'none'}; color: ${isLiked ? '#FF6B35' : '#E8ECF4'}"></i>
                         <span class="action-count like-count">${formatNumber(likeCount)}</span>
                     </button>
                     <button class="reel-action-btn btn-comment">
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="action-count">Share</span>
                     </button>
                     <button class="reel-action-btn btn-bookmark ${isBookmarked ? 'bookmarked' : ''}" data-id="${reel.id}">
-                        <i data-lucide="bookmark" style="fill: ${isBookmarked ? '#F59E0B' : 'none'}; color: ${isBookmarked ? '#F59E0B' : 'white'}"></i>
+                        <i data-lucide="bookmark" style="fill: ${isBookmarked ? '#FFD700' : 'none'}; color: ${isBookmarked ? '#FFD700' : '#E8ECF4'}"></i>
                     </button>
                 </div>
             `;
@@ -223,9 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         btnEl.classList.toggle('liked', isLiked);
         
-        const icon = btnEl.querySelector('i');
-        icon.style.fill = isLiked ? '#FF3366' : 'none';
-        icon.style.color = isLiked ? '#FF3366' : 'white';
+        const icon = btnEl.querySelector('i, svg');
+        if (icon) {
+            icon.style.fill = isLiked ? '#FF6B35' : 'none';
+            icon.style.color = isLiked ? '#FF6B35' : '#E8ECF4';
+        }
         
         const baseLikes = sampleReels.find(r => r.id === id).likes;
         btnEl.querySelector('.like-count').innerText = formatNumber(isLiked ? baseLikes + 1 : baseLikes);
@@ -240,9 +242,11 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('reelsState', JSON.stringify(savedState));
         
         btnEl.classList.toggle('bookmarked', isBookmarked);
-        const icon = btnEl.querySelector('i');
-        icon.style.fill = isBookmarked ? '#F59E0B' : 'none';
-        icon.style.color = isBookmarked ? '#F59E0B' : 'white';
+        const icon = btnEl.querySelector('i, svg');
+        if (icon) {
+            icon.style.fill = isBookmarked ? '#FFD700' : 'none';
+            icon.style.color = isBookmarked ? '#FFD700' : '#E8ECF4';
+        }
     }
 
     function showToast() {

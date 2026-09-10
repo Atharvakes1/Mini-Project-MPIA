@@ -26,7 +26,7 @@
         .settings-nav-item {
             padding: 0.75rem 1rem;
             border-radius: 8px;
-            color: var(--text-secondary, #B5B5B5);
+            color: var(--text-secondary, var(--text-secondary));
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -37,17 +37,17 @@
             background: rgba(255,255,255,0.05);
         }
         .settings-nav-item.active {
-            background: var(--accent-primary, #7C3AED);
-            color: white;
+            background: var(--accent-primary, var(--accent-primary));
+            color: var(--text-primary);
             font-weight: bold;
         }
         
         .settings-section {
-            background: var(--bg-secondary, #111);
+            background: var(--bg-secondary, var(--bg-secondary));
             border-radius: 12px;
             padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid #333;
+            border: 1px solid var(--bg-elevated);
         }
         
         .theme-cards {
@@ -57,20 +57,20 @@
             margin-top: 1rem;
         }
         .theme-card {
-            border: 2px solid #333;
+            border: 2px solid var(--bg-elevated);
             border-radius: 8px;
             padding: 1rem;
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
-            background: var(--bg-primary, #090909);
+            background: var(--bg-primary, var(--bg-primary));
         }
         .theme-card:hover {
-            border-color: #555;
+            border-color: rgba(255,255,255,0.12);
         }
         .theme-card.active {
-            border-color: var(--accent-primary, #7C3AED);
-            box-shadow: 0 0 15px var(--accent-primary, #7C3AED);
+            border-color: var(--accent-primary, var(--accent-primary));
+            box-shadow: 0 0 15px var(--accent-primary, var(--accent-primary));
         }
         
         .wallpaper-grid {
@@ -88,7 +88,7 @@
             background-position: center;
         }
         .wallpaper-item.active {
-            border-color: var(--accent-primary, #7C3AED);
+            border-color: var(--accent-primary, var(--accent-primary));
         }
         
         .toggle-switch {
@@ -101,16 +101,16 @@
         .slider {
             position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333; transition: .4s;
+            background-color: var(--bg-elevated); transition: .4s;
             border-radius: 24px;
         }
         .slider:before {
             position: absolute; content: "";
             height: 18px; width: 18px; left: 3px; bottom: 3px;
-            background-color: white; transition: .4s;
+            background-color: var(--text-primary); transition: .4s;
             border-radius: 50%;
         }
-        input:checked + .slider { background-color: var(--accent-primary, #7C3AED); }
+        input:checked + .slider { background-color: var(--accent-primary, var(--accent-primary)); }
         input:checked + .slider:before { transform: translateX(26px); }
         
         .setting-row {
@@ -118,29 +118,19 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 0;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--bg-elevated);
         }
         .setting-row:last-child { border-bottom: none; }
         
-        .input-field { background: #222; color: white; border: 1px solid #444; padding: 0.75rem; border-radius: 8px; width: 100%; margin-top: 0.5rem; }
+        .input-field { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.12); padding: 0.75rem; border-radius: 8px; width: 100%; margin-top: 0.5rem; }
         .btn { padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; border: none; font-weight: bold; }
-        .btn-primary { background: var(--accent-primary, #7C3AED); color: white; }
-        .btn-danger { background: #ef4444; color: white; }
+        .btn-primary { background: var(--accent-primary, var(--accent-primary)); color: var(--text-primary); }
+        .btn-danger { background: #FF5577; color: var(--text-primary); }
     </style>
 </head>
-<body class="bg-primary text-primary" style="background-color: var(--bg-primary, #090909); color: white; font-family: 'Inter', sans-serif;">
-    <nav class="navbar" style="border-bottom: 1px solid #333; padding: 1rem;">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
-            <h1 class="text-xl font-bold" style="color: var(--accent-primary, #7C3AED);">Campus Clone</h1>
-            <div style="display: flex; gap: 1rem;">
-                <a href="tasks.html" style="color: white; text-decoration: none;">Tasks</a>
-                <a href="settings.html" style="color: white; text-decoration: none;">Settings</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container section" style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
-        <h1 class="text-3xl font-bold" style="background: linear-gradient(90deg, #7C3AED, #B5B5B5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Settings</h1>
+<body class="bg-primary text-primary" style="background-color: var(--bg-primary, var(--bg-primary)); color: var(--text-primary); font-family: var(--font-body);">
+    <div class="container section" style="max-width: 1200px; margin: 64px auto 2rem auto; padding: 0 1rem;">
+        <h1 class="text-3xl font-bold" style="font-family: var(--font-display); background: linear-gradient(90deg, var(--accent-primary), var(--text-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Settings</h1>
         
         <div class="settings-grid">
             <!-- Sidebar -->
@@ -167,10 +157,10 @@
                 
                 <!-- Profile -->
                 <div class="settings-section" id="profile">
-                    <h2 class="text-2xl font-bold mb-6">Profile Settings</h2>
+                    <h2 class="text-2xl font-bold mb-6" style="font-family: var(--font-display);">Profile Settings</h2>
                     <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem;">
-                        <div style="width: 100px; height: 100px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 2rem;">AV</div>
-                        <button class="btn btn-primary" style="background: #333;">Change Avatar</button>
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 2rem;">AV</div>
+                        <button class="btn btn-primary" style="background: var(--bg-elevated);">Change Avatar</button>
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div>
@@ -195,12 +185,12 @@
 
                 <!-- Appearance -->
                 <div class="settings-section" id="appearance">
-                    <h2 class="text-2xl font-bold mb-6">Theme & Appearance</h2>
+                    <h2 class="text-2xl font-bold mb-6" style="font-family: var(--font-display);">Theme & Appearance</h2>
                     
-                    <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: #B5B5B5;">App Theme</h3>
+                    <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-secondary);">App Theme</h3>
                     <div class="theme-cards">
                         <div class="theme-card active" data-theme="dark" onclick="setTheme('dark')">
-                            <div style="width: 100%; height: 40px; background: #090909; border-radius: 4px; margin-bottom: 0.5rem;"></div>
+                            <div style="width: 100%; height: 40px; background: var(--bg-primary); border-radius: 4px; margin-bottom: 0.5rem;"></div>
                             Dark (Default)
                         </div>
                         <div class="theme-card" data-theme="light" onclick="setTheme('light')">
@@ -208,22 +198,22 @@
                             Light
                         </div>
                         <div class="theme-card" data-theme="neon" onclick="setTheme('neon')">
-                            <div style="width: 100%; height: 40px; background: #090909; border-radius: 4px; margin-bottom: 0.5rem; border-bottom: 4px solid #10b981;"></div>
+                            <div style="width: 100%; height: 40px; background: var(--bg-primary); border-radius: 4px; margin-bottom: 0.5rem; border-bottom: 4px solid #00D4FF;"></div>
                             Neon
                         </div>
                         <div class="theme-card" data-theme="gaming" onclick="setTheme('gaming')">
-                            <div style="width: 100%; height: 40px; background: #090909; border-radius: 4px; margin-bottom: 0.5rem; border-bottom: 4px solid #ef4444;"></div>
+                            <div style="width: 100%; height: 40px; background: var(--bg-primary); border-radius: 4px; margin-bottom: 0.5rem; border-bottom: 4px solid #00D4FF;"></div>
                             Gaming
                         </div>
                     </div>
                     
-                    <h3 style="margin-top: 2rem; margin-bottom: 0.5rem; color: #B5B5B5;">Chat Wallpaper</h3>
+                    <h3 style="margin-top: 2rem; margin-bottom: 0.5rem; color: var(--text-secondary);">Chat Wallpaper</h3>
                     <div class="wallpaper-grid">
-                        <div class="wallpaper-item active" style="background: linear-gradient(45deg, #111, #333);" onclick="setWallpaper('bg1')"></div>
+                        <div class="wallpaper-item active" style="background: linear-gradient(45deg, var(--bg-secondary), var(--bg-elevated));" onclick="setWallpaper('bg1')"></div>
                         <div class="wallpaper-item" style="background: linear-gradient(45deg, #2e1065, #000);" onclick="setWallpaper('bg2')"></div>
                         <div class="wallpaper-item" style="background: linear-gradient(45deg, #064e3b, #000);" onclick="setWallpaper('bg3')"></div>
                         <div class="wallpaper-item" style="background: linear-gradient(45deg, #7f1d1d, #000);" onclick="setWallpaper('bg4')"></div>
-                        <div class="wallpaper-item" style="display: flex; align-items: center; justify-content: center; background: #222; border: 1px dashed #555;">
+                        <div class="wallpaper-item" style="display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: 1px dashed rgba(255,255,255,0.12);">
                             <label style="cursor: pointer;">
                                 <i data-lucide="upload"></i>
                                 <input type="file" style="display: none;" onchange="handleCustomWallpaper(event)">
@@ -234,12 +224,12 @@
 
                 <!-- Notifications -->
                 <div class="settings-section" id="notifications">
-                    <h2 class="text-2xl font-bold mb-6">Notifications</h2>
+                    <h2 class="text-2xl font-bold mb-6" style="font-family: var(--font-display);">Notifications</h2>
                     
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Message Notifications</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Receive push notifications for new messages</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Receive push notifications for new messages</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked onchange="savePrefs()">
@@ -250,7 +240,7 @@
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Event Reminders</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Get reminded before campus events start</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Get reminded before campus events start</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked onchange="savePrefs()">
@@ -261,7 +251,7 @@
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Task Assignments</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Notify when a new task is handed off to you</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Notify when a new task is handed off to you</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked onchange="savePrefs()">
@@ -272,7 +262,7 @@
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Sound Effects</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Play sounds for messages and clicks</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Play sounds for messages and clicks</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" id="sound-toggle" checked onchange="toggleSounds()">
@@ -283,7 +273,7 @@
 
                 <!-- Security -->
                 <div class="settings-section" id="security">
-                    <h2 class="text-2xl font-bold mb-6">Security</h2>
+                    <h2 class="text-2xl font-bold mb-6" style="font-family: var(--font-display);">Security</h2>
                     
                     <div style="margin-bottom: 2rem;">
                         <h3 style="font-weight: bold; margin-bottom: 1rem;">Change Password</h3>
@@ -292,35 +282,35 @@
                         <button class="btn btn-primary" style="margin-top: 1rem;">Update Password</button>
                     </div>
                     
-                    <div style="margin-bottom: 2rem; border-top: 1px solid #333; padding-top: 1rem;">
+                    <div style="margin-bottom: 2rem; border-top: 1px solid var(--bg-elevated); padding-top: 1rem;">
                         <h3 style="font-weight: bold; margin-bottom: 1rem;">Passkeys</h3>
                         <div class="setting-row">
                             <span>MacBook Pro (Chrome)</span>
-                            <span style="color: #10b981; font-size: 0.85rem;">Active</span>
+                            <span style="color: #00E080; font-size: 0.85rem;">Active</span>
                         </div>
-                        <button class="btn btn-secondary" style="margin-top: 1rem; background: #333;"><i data-lucide="key" style="display:inline; width:16px; height:16px;"></i> Register New Passkey</button>
+                        <button class="btn btn-secondary" style="margin-top: 1rem; background: var(--bg-elevated);"><i data-lucide="key" style="display:inline; width:16px; height:16px;"></i> Register New Passkey</button>
                     </div>
                     
-                    <div style="border-top: 1px solid #333; padding-top: 1rem;">
+                    <div style="border-top: 1px solid var(--bg-elevated); padding-top: 1rem;">
                         <h3 style="font-weight: bold; margin-bottom: 1rem;">Active Sessions</h3>
                         <div class="setting-row">
                             <div>
                                 <div>Mac OS - Chrome</div>
-                                <div style="font-size: 0.8rem; color: #B5B5B5;">Current Session</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">Current Session</div>
                             </div>
                         </div>
-                        <button class="btn btn-secondary" style="margin-top: 1rem; background: #333;">Log out all devices</button>
+                        <button class="btn btn-secondary" style="margin-top: 1rem; background: var(--bg-elevated);">Log out all devices</button>
                     </div>
                 </div>
 
                 <!-- Privacy -->
                 <div class="settings-section" id="privacy">
-                    <h2 class="text-2xl font-bold mb-6">Privacy</h2>
+                    <h2 class="text-2xl font-bold mb-6" style="font-family: var(--font-display);">Privacy</h2>
                     
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Show Online Status</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Let others see when you're online</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Let others see when you're online</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked onchange="savePrefs()">
@@ -331,7 +321,7 @@
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Read Receipts</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Let others see when you've read their messages</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Let others see when you've read their messages</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked onchange="savePrefs()">
@@ -342,7 +332,7 @@
                     <div class="setting-row">
                         <div>
                             <div style="font-weight: bold;">Profile Visibility</div>
-                            <div style="font-size: 0.85rem; color: #B5B5B5;">Make profile visible to entire campus</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Make profile visible to entire campus</div>
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked onchange="savePrefs()">
@@ -352,9 +342,9 @@
                 </div>
 
                 <!-- Danger Zone -->
-                <div class="settings-section" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.05);">
-                    <h2 class="text-2xl font-bold mb-2" style="color: #ef4444;">Danger Zone</h2>
-                    <p style="color: #B5B5B5; margin-bottom: 1.5rem;">Once you delete your account, there is no going back. Please be certain.</p>
+                <div class="settings-section" style="border-color: #FF5577; background: rgba(239, 68, 68, 0.05);">
+                    <h2 class="text-2xl font-bold mb-2" style="font-family: var(--font-display); color: #FF5577;">Danger Zone</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Once you delete your account, there is no going back. Please be certain.</p>
                     <button class="btn btn-danger" onclick="confirmDelete()">Delete Account</button>
                 </div>
                 
@@ -394,13 +384,13 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
-            let bgColor = '#333';
-            if (type === 'success') bgColor = '#10b981';
-            if (type === 'error') bgColor = '#ef4444';
+            let bgColor = 'var(--bg-elevated)';
+            if (type === 'success') bgColor = '#00E080';
+            if (type === 'error') bgColor = '#FF5577';
 
             toast.style.cssText = `
                 background: ${bgColor};
-                color: white;
+                color: var(--text-primary);
                 padding: 0.75rem 1rem;
                 border-radius: 8px;
                 box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -434,5 +424,6 @@
             document.getElementById('sound-toggle').checked = savedSounds;
         });
     </script>
+    <script src="/js/navbar.js"></script>
 </body>
 </html>

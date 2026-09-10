@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat - Campus Clone MPIA</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Socket.io -->
@@ -14,32 +14,38 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/animations.css">
     <style>
+        /* Typography overrides */
+        h1, h2, h3, h4, h5, h6, .text-display { font-family: var(--font-display) !important; }
+        .badge, .label, .time, .timestamp, .date, .label-xs, .label-sm, .badge-accent, .badge-admin, .badge-mod, .badge-member { font-family: var(--font-mono) !important; }
+
         /* Chat specific styles */
         body, html {
             height: 100%;
             overflow: hidden;
             margin: 0;
-            background-color: var(--bg-primary, #090909);
+            background-color: var(--bg-primary, var(--bg-primary));
             color: var(--text-primary, #ffffff);
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
         }
         
         .chat-wrapper {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: calc(100vh - 64px);
+            margin-top: 64px;
         }
 
         .chat-layout {
             display: grid;
             grid-template-columns: 350px 1fr 350px;
-            flex: 1;
+            height: calc(100vh - 64px);
             overflow: hidden;
         }
 
+
         /* Sidebar */
         .chat-sidebar {
-            background-color: var(--bg-secondary, #111111);
+            background-color: var(--bg-secondary, var(--bg-secondary));
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
@@ -61,7 +67,7 @@
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            color: white;
+            color: var(--text-primary);
             box-sizing: border-box;
         }
 
@@ -70,7 +76,7 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted, #7D7D7D);
+            color: var(--text-muted, var(--text-muted));
         }
 
         .chat-tabs {
@@ -86,13 +92,13 @@
             border-radius: 20px;
             font-size: 0.85rem;
             cursor: pointer;
-            white-space: nowrap;
+            var(--text-primary)-space: nowrap;
             transition: all 0.3s ease;
         }
 
         .chat-tab.active {
-            background-color: var(--accent-primary, #7C3AED);
-            color: white;
+            background-color: var(--accent-primary, var(--accent-primary));
+            color: var(--text-primary);
         }
 
         .chat-list {
@@ -114,14 +120,14 @@
         }
 
         .chat-item.active {
-            border-left: 4px solid var(--accent-primary, #7C3AED);
+            border-left: 4px solid var(--accent-primary, var(--accent-primary));
         }
 
         .chat-item-avatar {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: var(--accent-primary, #7C3AED);
+            background-color: var(--accent-primary, var(--accent-primary));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -143,27 +149,27 @@
 
         .chat-item-title {
             font-weight: 600;
-            white-space: nowrap;
+            var(--text-primary)-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .chat-item-time {
             font-size: 0.75rem;
-            color: var(--text-muted, #7D7D7D);
+            color: var(--text-muted, var(--text-muted));
         }
 
         .chat-item-message {
             font-size: 0.85rem;
-            color: var(--text-secondary, #B5B5B5);
-            white-space: nowrap;
+            color: var(--text-secondary, var(--text-secondary));
+            var(--text-primary)-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .unread-badge {
-            background-color: var(--accent-primary, #7C3AED);
-            color: white;
+            background-color: var(--accent-primary, var(--accent-primary));
+            color: var(--text-primary);
             font-size: 0.7rem;
             padding: 2px 6px;
             border-radius: 10px;
@@ -179,11 +185,11 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: var(--accent-primary, #7C3AED);
+            background-color: var(--accent-primary, var(--accent-primary));
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
             cursor: pointer;
             z-index: 10;
         }
@@ -200,7 +206,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 25px;
-            background-color: var(--bg-secondary, #111111);
+            background-color: var(--bg-secondary, var(--bg-secondary));
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -217,7 +223,7 @@
 
         .chat-header-subtitle {
             font-size: 0.8rem;
-            color: var(--text-muted, #7D7D7D);
+            color: var(--text-muted, var(--text-muted));
         }
 
         .chat-header-actions {
@@ -227,12 +233,12 @@
 
         .chat-header-actions i {
             cursor: pointer;
-            color: var(--text-secondary, #B5B5B5);
+            color: var(--text-secondary, var(--text-secondary));
             transition: color 0.3s;
         }
 
         .chat-header-actions i:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         .chat-wallpaper {
@@ -272,16 +278,16 @@
 
         .msg-bubble-sent {
             align-self: flex-end;
-            background-color: var(--accent-primary, #7C3AED);
+            background-color: var(--accent-primary, var(--accent-primary));
             border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
         }
 
         .msg-sender {
             font-size: 0.75rem;
             font-weight: 600;
             margin-bottom: 4px;
-            color: #A78BFA;
+            color: var(--text-accent);
         }
 
         .msg-text {
@@ -305,7 +311,7 @@
             padding: 6px 12px;
             border-radius: 12px;
             font-size: 0.75rem;
-            color: var(--text-muted, #7D7D7D);
+            color: var(--text-muted, var(--text-muted));
         }
 
         .typing-indicator {
@@ -322,7 +328,7 @@
         .typing-dot {
             width: 6px;
             height: 6px;
-            background-color: #B5B5B5;
+            background-color: var(--text-secondary);
             border-radius: 50%;
             animation: typing 1.4s infinite ease-in-out;
         }
@@ -344,7 +350,7 @@
         /* Input Area */
         .chat-input-container {
             padding: 15px 20px;
-            background-color: var(--bg-secondary, #111111);
+            background-color: var(--bg-secondary, var(--bg-secondary));
             display: flex;
             align-items: flex-end;
             gap: 15px;
@@ -360,12 +366,12 @@
 
         .input-actions i {
             cursor: pointer;
-            color: var(--text-secondary, #B5B5B5);
+            color: var(--text-secondary, var(--text-secondary));
             transition: color 0.3s;
         }
 
         .input-actions i:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         .chat-input-wrapper {
@@ -381,7 +387,7 @@
             flex: 1;
             background: transparent;
             border: none;
-            color: white;
+            color: var(--text-primary);
             padding: 10px;
             resize: none;
             max-height: 100px;
@@ -393,9 +399,9 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background-color: var(--accent-primary, #7C3AED);
+            background-color: var(--accent-primary, var(--accent-primary));
             border: none;
-            color: white;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -409,7 +415,7 @@
 
         /* Info Panel */
         .chat-info-panel {
-            background-color: var(--bg-secondary, #111111);
+            background-color: var(--bg-secondary, var(--bg-secondary));
             border-left: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
@@ -429,7 +435,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background-color: var(--accent-primary, #7C3AED);
+            background-color: var(--accent-primary, var(--accent-primary));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -446,7 +452,7 @@
 
         .info-subtitle {
             font-size: 0.85rem;
-            color: var(--text-muted, #7D7D7D);
+            color: var(--text-muted, var(--text-muted));
             margin-bottom: 15px;
         }
 
@@ -476,14 +482,14 @@
             gap: 8px;
             background: none;
             border: none;
-            color: var(--text-secondary, #B5B5B5);
+            color: var(--text-secondary, var(--text-secondary));
             cursor: pointer;
             transition: color 0.3s;
             font-size: 0.8rem;
         }
 
         .info-action-btn:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         .info-section {
@@ -495,7 +501,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 15px;
-            color: var(--text-secondary, #B5B5B5);
+            color: var(--text-secondary, var(--text-secondary));
         }
 
         .member-list {
@@ -514,7 +520,7 @@
             width: 35px;
             height: 35px;
             border-radius: 50%;
-            background-color: #333;
+            background-color: var(--bg-elevated);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -545,7 +551,7 @@
 
         .media-item {
             aspect-ratio: 1;
-            background-color: #333;
+            background-color: var(--bg-elevated);
             border-radius: 4px;
         }
 
@@ -570,17 +576,13 @@
 
         .btn-danger:hover {
             background-color: #EF4444;
-            color: white;
+            color: var(--text-primary);
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body style="background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body);">
     <div class="chat-wrapper">
-        <!-- Minimal Navbar placeholder -->
-        <nav class="navbar" style="padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight: bold; font-size: 1.2rem;"><span class="text-gradient">Campus</span> Clone</div>
-            <div><i data-lucide="bell"></i> <i data-lucide="user"></i></div>
-        </nav>
 
         <div class="chat-layout">
             <!-- LEFT SIDEBAR -->
@@ -692,9 +694,9 @@
                         <i data-lucide="mic" id="voiceBtn"></i>
                     </div>
                     <div class="chat-input-wrapper">
-                        <i data-lucide="smile" id="emojiBtn" style="cursor: pointer; color: #B5B5B5; margin-right: 10px;"></i>
+                        <i data-lucide="smile" id="emojiBtn" style="cursor: pointer; color: var(--text-secondary); margin-right: 10px;"></i>
                         <textarea class="chat-input" id="messageInput" placeholder="Type a message..." rows="1"></textarea>
-                        <i data-lucide="image" id="gifBtn" style="cursor: pointer; color: #B5B5B5; margin-left: 10px;"></i>
+                        <i data-lucide="image" id="gifBtn" style="cursor: pointer; color: var(--text-secondary); margin-left: 10px;"></i>
                     </div>
                     <button class="btn-send" id="sendBtn">
                         <i data-lucide="send"></i>
@@ -783,5 +785,6 @@
     <script>
         lucide.createIcons();
     </script>
+    <script src="/js/navbar.js"></script>
 </body>
 </html>

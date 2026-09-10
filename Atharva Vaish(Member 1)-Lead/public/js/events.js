@@ -133,7 +133,7 @@ function renderEvents() {
         const card = document.createElement('div');
         card.className = 'card hover-glow transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col';
         card.innerHTML = `
-            <div class="h-32 bg-gradient-to-r from-purple-800 to-indigo-900 relative cursor-pointer" onclick="openEventDetail(${e.id})">
+            <div class="h-32 bg-gradient-to-r from-cyan-800 to-blue-900 relative cursor-pointer" onclick="openEventDetail(${e.id})">
                 <div class="absolute top-2 right-2 bg-black/60 rounded p-1 text-center min-w-[50px] backdrop-blur-sm">
                     <div class="text-[10px] text-accent-primary font-bold">${month}</div>
                     <div class="text-lg font-bold">${day}</div>
@@ -193,7 +193,7 @@ function renderClubs() {
         const hue = (c.id * 37) % 360;
         
         card.innerHTML = `
-            <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mb-3 shadow-lg" style="background-color: hsl(${hue}, 70%, 30%);">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mb-3 shadow-lg" style="background-color: hsl(${180 + (hue % 60)}, 80%, 40%);">
                 ${c.icon}
             </div>
             <h3 class="font-bold text-lg mb-1">${c.name}</h3>

@@ -1,10 +1,10 @@
 const CURRENT_USER_ID = 1; // Assuming Member 1 is the current user
 
 const teamMembers = [
-    { name: 'Atharva Vaish', role: 'Lead', id: 1, initials: 'AV', color: '#ef4444' },
-    { name: 'Bhoomika', role: 'Member 2', id: 2, initials: 'B', color: '#3b82f6' },
-    { name: 'Bhavya', role: 'Frontend', id: 3, initials: 'BH', color: '#10b981' },
-    { name: 'Ayush Soni', role: 'Member 4', id: 4, initials: 'AS', color: '#eab308' }
+    { name: 'Atharva Vaish', role: 'Lead', id: 1, initials: 'AV', color: '#FF5577' },
+    { name: 'Bhoomika', role: 'Member 2', id: 2, initials: 'B', color: '#0066FF' },
+    { name: 'Bhavya', role: 'Frontend', id: 3, initials: 'BH', color: '#00E080' },
+    { name: 'Ayush Soni', role: 'Member 4', id: 4, initials: 'AS', color: '#FFB020' }
 ];
 
 let tasks = JSON.parse(localStorage.getItem('campusTasks')) || [
@@ -102,7 +102,7 @@ function renderTasks() {
         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <h3 style="font-weight: bold; font-size: 1.1rem;">${task.title}</h3>
-                <span style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; background: #333;">${task.status}</span>
+                <span style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; background: #1E2A45;">${task.status}</span>
             </div>
             <p style="color: var(--text-muted); font-size: 0.9rem;">${task.desc.substring(0, 60)}${task.desc.length > 60 ? '...' : ''}</p>
             <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -283,9 +283,9 @@ function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     
-    let bgColor = '#333';
-    if (type === 'success') bgColor = '#10b981';
-    if (type === 'error') bgColor = '#ef4444';
+    let bgColor = '#1E2A45';
+    if (type === 'success') bgColor = '#00E080';
+    if (type === 'error') bgColor = '#FF5577';
 
     toast.style.cssText = `
         background: ${bgColor};

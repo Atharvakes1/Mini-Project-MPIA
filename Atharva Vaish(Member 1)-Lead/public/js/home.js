@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ripples.style.left = x + 'px';
             ripples.style.top = y + 'px';
             ripples.style.position = 'absolute';
-            ripples.style.background = 'rgba(255, 255, 255, 0.3)';
+            ripples.style.background = 'rgba(0, 212, 255, 0.3)';
             ripples.style.transform = 'translate(-50%, -50%)';
             ripples.style.pointerEvents = 'none';
             ripples.style.borderRadius = '50%';
@@ -113,58 +113,58 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const mockups = {
         feed: `
-            <div class="bg-[#111] p-3 rounded-xl border border-[#222] animate-pop-in">
+            <div class="bg-[#131A2B] p-3 rounded-xl border border-[#1A2340] animate-pop-in">
                 <div class="flex items-center gap-2 mb-2">
                     <div class="w-8 h-8 rounded-full bg-blue-500/20"></div>
-                    <div><div class="h-3 w-20 bg-[#333] rounded"></div></div>
+                    <div><div class="h-3 w-20 bg-[#1E2A45] rounded"></div></div>
                 </div>
-                <div class="h-16 bg-[#222] rounded-lg w-full"></div>
+                <div class="h-16 bg-[#1A2340] rounded-lg w-full"></div>
             </div>
-            <div class="bg-[#111] p-3 rounded-xl border border-[#222] animate-pop-in" style="animation-delay: 0.1s">
+            <div class="bg-[#131A2B] p-3 rounded-xl border border-[#1A2340] animate-pop-in" style="animation-delay: 0.1s">
                 <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-full bg-purple-500/20"></div>
-                    <div><div class="h-3 w-24 bg-[#333] rounded"></div></div>
+                    <div class="w-8 h-8 rounded-full bg-cyan-500/20"></div>
+                    <div><div class="h-3 w-24 bg-[#1E2A45] rounded"></div></div>
                 </div>
-                <div class="h-20 bg-[#222] rounded-lg w-full"></div>
+                <div class="h-20 bg-[#1A2340] rounded-lg w-full"></div>
             </div>`,
         forums: `
-            <div class="bg-[#111] p-4 rounded-xl border border-[#222] h-full flex flex-col gap-2">
-                <div class="font-bold text-sm text-[#7C3AED]"># cs-doubt-clearing</div>
-                <div class="bg-[#222] p-2 rounded w-3/4 text-xs text-gray-400">Can someone explain pointers?</div>
-                <div class="bg-[#7C3AED]/20 p-2 rounded w-3/4 self-end text-xs text-right text-gray-300">It stores memory address...</div>
+            <div class="bg-[#131A2B] p-4 rounded-xl border border-[#1A2340] h-full flex flex-col gap-2">
+                <div class="font-bold text-sm text-[#00D4FF]"># cs-doubt-clearing</div>
+                <div class="bg-[#1A2340] p-2 rounded w-3/4 text-xs text-gray-400">Can someone explain pointers?</div>
+                <div class="bg-[#00D4FF]/20 p-2 rounded w-3/4 self-end text-xs text-right text-gray-300">It stores memory address...</div>
             </div>`,
         chat: `
             <div class="flex flex-col gap-3 h-full">
-                <div class="flex gap-2 items-center bg-[#111] p-2 rounded-xl border border-[#222]">
+                <div class="flex gap-2 items-center bg-[#131A2B] p-2 rounded-xl border border-[#1A2340]">
                     <div class="w-10 h-10 rounded-full bg-green-500/20"></div>
-                    <div class="flex-1"><div class="h-3 w-16 bg-[#333] rounded mb-1"></div><div class="h-2 w-24 bg-[#222] rounded"></div></div>
+                    <div class="flex-1"><div class="h-3 w-16 bg-[#1E2A45] rounded mb-1"></div><div class="h-2 w-24 bg-[#1A2340] rounded"></div></div>
                 </div>
-                <div class="flex gap-2 items-center bg-[#111] p-2 rounded-xl border border-[#222]">
+                <div class="flex gap-2 items-center bg-[#131A2B] p-2 rounded-xl border border-[#1A2340]">
                     <div class="w-10 h-10 rounded-full bg-yellow-500/20"></div>
-                    <div class="flex-1"><div class="h-3 w-20 bg-[#333] rounded mb-1"></div><div class="h-2 w-16 bg-[#222] rounded"></div></div>
+                    <div class="flex-1"><div class="h-3 w-20 bg-[#1E2A45] rounded mb-1"></div><div class="h-2 w-16 bg-[#1A2340] rounded"></div></div>
                 </div>
             </div>`,
         events: `
             <div class="grid grid-cols-1 gap-2">
-                <div class="h-24 bg-gradient-to-r from-[#7C3AED]/40 to-blue-500/40 rounded-xl flex items-end p-2 border border-[#7C3AED]/30">
-                    <div class="font-bold text-white text-sm">Tech Fest 2024</div>
+                <div class="h-24 bg-gradient-to-r from-[#00D4FF]/40 to-blue-500/40 rounded-xl flex items-end p-2 border border-[#00D4FF]/30">
+                    <div class="font-bold text-[#E8ECF4] text-sm">Tech Fest 2024</div>
                 </div>
                 <div class="h-24 bg-gradient-to-r from-green-500/40 to-teal-500/40 rounded-xl flex items-end p-2 border border-green-500/30">
-                    <div class="font-bold text-white text-sm">Alumni Meet</div>
+                    <div class="font-bold text-[#E8ECF4] text-sm">Alumni Meet</div>
                 </div>
             </div>`,
         reels: `
-            <div class="h-full bg-gray-900 rounded-xl relative overflow-hidden flex items-center justify-center border border-[#333]">
-                <i data-lucide="play" class="w-12 h-12 text-white/50"></i>
+            <div class="h-full bg-gray-900 rounded-xl relative overflow-hidden flex items-center justify-center border border-[#1E2A45]">
+                <i data-lucide="play" class="w-12 h-12 text-[#E8ECF4]/50"></i>
                 <div class="absolute bottom-4 left-4 right-4">
-                    <div class="h-3 w-20 bg-white/30 rounded mb-2"></div>
-                    <div class="h-2 w-32 bg-white/20 rounded"></div>
+                    <div class="h-3 w-20 bg-[#E8ECF4]/30 rounded mb-2"></div>
+                    <div class="h-2 w-32 bg-[#E8ECF4]/20 rounded"></div>
                 </div>
             </div>`,
         ai: `
             <div class="flex flex-col gap-3 h-full">
-                <div class="bg-[#222] p-3 rounded-xl rounded-tr-none self-end max-w-[80%] text-xs text-gray-300">When is the mid-term for OS?</div>
-                <div class="bg-[#7C3AED]/20 p-3 rounded-xl rounded-tl-none self-start max-w-[80%] text-xs text-white border border-[#7C3AED]/30">According to the academic calendar, Operating Systems mid-term is on 15th October.</div>
+                <div class="bg-[#1A2340] p-3 rounded-xl rounded-tr-none self-end max-w-[80%] text-xs text-gray-300">When is the mid-term for OS?</div>
+                <div class="bg-[#00D4FF]/20 p-3 rounded-xl rounded-tl-none self-start max-w-[80%] text-xs text-[#E8ECF4] border border-[#00D4FF]/30">According to the academic calendar, Operating Systems mid-term is on 15th October.</div>
             </div>`
     };
 
@@ -225,23 +225,25 @@ document.addEventListener('DOMContentLoaded', () => {
     accordionTriggers.forEach(trigger => {
         trigger.addEventListener('click', () => {
             const content = trigger.nextElementSibling;
-            const icon = trigger.querySelector('i');
+            const icon = trigger.querySelector('i, svg');
             
             // Close others
             accordionTriggers.forEach(t => {
                 if (t !== trigger) {
                     t.nextElementSibling.classList.add('hidden');
-                    const tIcon = t.querySelector('i');
+                    const tIcon = t.querySelector('i, svg');
                     if(tIcon) tIcon.style.transform = 'rotate(0deg)';
                 }
             });
 
             // Toggle current
             content.classList.toggle('hidden');
-            if (content.classList.contains('hidden')) {
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                icon.style.transform = 'rotate(180deg)';
+            if (icon) {
+                if (content.classList.contains('hidden')) {
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    icon.style.transform = 'rotate(180deg)';
+                }
             }
         });
     });

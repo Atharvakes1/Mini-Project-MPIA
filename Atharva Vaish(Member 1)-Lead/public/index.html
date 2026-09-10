@@ -3,39 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Clone - MPIA | GL Bajaj Campus Hub</title>
-  <meta name="description" content="Your entire college life, connected in one app. Chat, Events, Clubs, AI Assistant, and more for GL Bajaj Institute.">
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- Stylesheets -->
+  <title>Campus Clone - MPIA</title>
+  <meta name="description" content="Your entire college life, connected in one app. GL Bajaj Institute.">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/animations.css">
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
   <style>
-    /* Splash-specific styles that don't need to be in the global CSS */
     .splash-particles {
       position: absolute;
       inset: 0;
       overflow: hidden;
       pointer-events: none;
     }
-    
     .splash-particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: var(--accent-primary);
       border-radius: 50%;
       opacity: 0;
     }
-    
+    .splash-particle.cyan {
+      background: var(--accent-primary);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+    .splash-particle.warm {
+      background: var(--accent-warm);
+      box-shadow: 0 0 6px var(--accent-warm-glow);
+    }
+    .splash-particle.gold {
+      background: var(--accent-gold);
+    }
     .splash-ring {
       position: absolute;
       top: 50%;
@@ -46,40 +40,36 @@
       border-radius: 50%;
       opacity: 0;
     }
-    
     .splash-ring:nth-child(1) { animation: splashPulseRing 2s ease-out 1s forwards; }
-    .splash-ring:nth-child(2) { animation: splashPulseRing 2s ease-out 1.3s forwards; }
+    .splash-ring:nth-child(2) { animation: splashPulseRing 2s ease-out 1.3s forwards; border-color: var(--accent-warm); }
     .splash-ring:nth-child(3) { animation: splashPulseRing 2s ease-out 1.6s forwards; }
-    
     .splash-glitch {
       animation: splashGlitch 0.3s ease 0.8s 2;
     }
-    
     .splash-version {
+      font-family: var(--font-mono);
       font-size: 11px;
       color: var(--text-muted);
       margin-top: 8px;
       opacity: 0;
       animation: splashFade 0.4s ease 1.1s forwards;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
     }
-
-    /* Redirect notice */
     .redirect-notice {
       position: fixed;
-      bottom: 32px;
+      bottom: 36px;
       left: 50%;
       transform: translateX(-50%);
       color: var(--text-muted);
-      font-size: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
       opacity: 0;
       animation: splashFade 0.3s ease 2s forwards;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
     .redirect-notice .spinner {
       width: 14px;
       height: 14px;
@@ -88,144 +78,90 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes splashPulseRing {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.7; }
+      100% { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
+    }
+    @keyframes splashGlitch {
+      0%, 100% { text-shadow: none; }
+      15% { text-shadow: -3px 0 #00D4FF, 3px 0 #FF6B35; }
+      30% { text-shadow: 3px 0 #00D4FF, -3px 0 #FF6B35; }
+      60% { text-shadow: -2px 2px #00D4FF, 2px -2px #FF6B35; }
+    }
   </style>
 </head>
 <body>
-  <!-- ═══ SPLASH SCREEN ═══ -->
   <div class="splash-screen" id="splashScreen">
-    <!-- Pulse rings -->
     <div class="splash-ring"></div>
     <div class="splash-ring"></div>
     <div class="splash-ring"></div>
-    
-    <!-- Particles -->
     <div class="splash-particles" id="splashParticles"></div>
-    
-    <!-- Logo -->
-    <div class="splash-logo splash-glitch text-gradient" id="splashLogo">
-      Campus Clone
-    </div>
-    
-    <div class="splash-subtitle">GL Bajaj Institute of Technology & Management</div>
+    <div class="splash-logo splash-glitch text-gradient-mixed" id="splashLogo">Campus Clone</div>
+    <div class="splash-subtitle">GL Bajaj Institute of Technology &amp; Management</div>
     <div class="splash-version">MPIA • Mini Project</div>
-    
-    <!-- Loading bar -->
     <div class="splash-loader">
-      <div class="splash-loader-bar" id="splashLoaderBar"></div>
+      <div class="splash-loader-bar"></div>
     </div>
-    
-    <!-- Redirect notice -->
     <div class="redirect-notice">
       <div class="spinner"></div>
       <span>Loading your campus experience...</span>
     </div>
   </div>
 
-  <!-- ═══ AUDIO EFFECTS ═══ -->
-  <audio id="sfxSplash" preload="auto">
-    <!-- Synthetic startup sound - will be generated via Web Audio API -->
-  </audio>
-
   <script>
-    // ─── Splash Particle Generator ───
-    (function generateSplashParticles() {
+    (function generateParticles() {
       const container = document.getElementById('splashParticles');
-      const count = 30;
-      
-      for (let i = 0; i < count; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'splash-particle';
-        
-        const x = Math.random() * 100;
-        const y = Math.random() * 100;
-        const driftX = (Math.random() - 0.5) * 200;
-        const driftY = (Math.random() - 0.5) * 200;
+      const colors = ['cyan', 'warm', 'gold'];
+      for (let i = 0; i < 35; i++) {
+        const p = document.createElement('div');
+        p.className = 'splash-particle ' + colors[i % 3];
+        const x = Math.random() * 100, y = Math.random() * 100;
+        const dx = (Math.random() - 0.5) * 220, dy = (Math.random() - 0.5) * 220;
         const delay = Math.random() * 2 + 0.5;
-        const duration = Math.random() * 2 + 2;
+        const dur = Math.random() * 2 + 2;
         const size = Math.random() * 4 + 2;
-        
-        particle.style.cssText = `
-          left: ${x}%;
-          top: ${y}%;
-          width: ${size}px;
-          height: ${size}px;
-          --drift-x: ${driftX}px;
-          --drift-y: ${driftY}px;
-          animation: splashParticleDrift ${duration}s ease ${delay}s infinite;
-        `;
-        
-        container.appendChild(particle);
+        p.style.cssText = `left:${x}%;top:${y}%;width:${size}px;height:${size}px;--drift-x:${dx}px;--drift-y:${dy}px;animation:splashParticleDrift ${dur}s ease ${delay}s infinite;`;
+        container.appendChild(p);
       }
     })();
 
-    // ─── Splash Sound Effect (Web Audio API) ───
     function playSplashSound() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // Rising tone
-        const osc1 = ctx.createOscillator();
-        const gain1 = ctx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(400, ctx.currentTime);
-        osc1.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.3);
-        gain1.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-        osc1.connect(gain1).connect(ctx.destination);
-        osc1.start(ctx.currentTime);
-        osc1.stop(ctx.currentTime + 0.5);
-        
-        // Sparkle
-        const osc2 = ctx.createOscillator();
-        const gain2 = ctx.createGain();
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(1200, ctx.currentTime + 0.2);
-        osc2.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.4);
-        gain2.gain.setValueAtTime(0.08, ctx.currentTime + 0.2);
-        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
-        osc2.connect(gain2).connect(ctx.destination);
-        osc2.start(ctx.currentTime + 0.2);
-        osc2.stop(ctx.currentTime + 0.6);
-      } catch (e) {
-        // Web Audio not supported, fail silently
-      }
+        const o1 = ctx.createOscillator(), g1 = ctx.createGain();
+        o1.type = 'sine';
+        o1.frequency.setValueAtTime(500, ctx.currentTime);
+        o1.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.3);
+        g1.gain.setValueAtTime(0.12, ctx.currentTime);
+        g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        o1.connect(g1).connect(ctx.destination);
+        o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.5);
+        const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+        o2.type = 'sine';
+        o2.frequency.setValueAtTime(1400, ctx.currentTime + 0.2);
+        o2.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.4);
+        g2.gain.setValueAtTime(0.06, ctx.currentTime + 0.2);
+        g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+        o2.connect(g2).connect(ctx.destination);
+        o2.start(ctx.currentTime + 0.2); o2.stop(ctx.currentTime + 0.6);
+      } catch (_) {}
     }
 
-    // ─── Splash Flow ───
     document.addEventListener('DOMContentLoaded', () => {
-      // Play sound after a small delay (needs user gesture in some browsers)
+      setTimeout(playSplashSound, 300);
       setTimeout(() => {
-        playSplashSound();
-      }, 300);
-      
-      // After splash animation completes, redirect to home or login
-      setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        splash.classList.add('fade-out');
-        
-        // Check if user is logged in
+        document.getElementById('splashScreen').classList.add('fade-out');
         setTimeout(() => {
-          const user = sessionStorage.getItem('campusUser');
-          if (user) {
-            window.location.href = '/pages/home.html';
-          } else {
-            window.location.href = '/pages/login.html';
-          }
-        }, 600); // Wait for fade-out transition
-      }, 3200); // Total splash duration: ~3.2 seconds
+          window.location.href = sessionStorage.getItem('campusUser') ? '/pages/home.html' : '/pages/login.html';
+        }, 600);
+      }, 3200);
     });
 
-    // ─── Skip Splash on Click ───
     document.getElementById('splashScreen').addEventListener('click', () => {
-      const splash = document.getElementById('splashScreen');
-      splash.classList.add('fade-out');
+      document.getElementById('splashScreen').classList.add('fade-out');
       setTimeout(() => {
-        const user = sessionStorage.getItem('campusUser');
-        if (user) {
-          window.location.href = '/pages/home.html';
-        } else {
-          window.location.href = '/pages/login.html';
-        }
+        window.location.href = sessionStorage.getItem('campusUser') ? '/pages/home.html' : '/pages/login.html';
       }, 400);
     });
   </script>
