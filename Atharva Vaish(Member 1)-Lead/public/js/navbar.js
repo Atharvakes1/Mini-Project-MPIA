@@ -22,10 +22,12 @@
 
   function getUserName() {
     try {
-      const raw = sessionStorage.getItem('campusUser');
+      const raw = sessionStorage.getItem('campusUser') || 
+                  sessionStorage.getItem('mpia_user') || 
+                  localStorage.getItem('campusUser');
       if (raw) {
         const u = JSON.parse(raw);
-        return u.name || u.email?.split('@')[0] || 'User';
+        return u.name || u.email?.split('@')[0] || 'Student';
       }
     } catch (_) {}
     return 'Student';

@@ -233,14 +233,16 @@ function processAuthSuccess(userData) {
     playSuccessSound();
     showToast('Authentication Successful! Redirecting...', 'success');
     
-    // Export data to sessionStorage
+    // Export data to sessionStorage & localStorage for universal compatibility
+    sessionStorage.setItem('campusUser', JSON.stringify(userData));
     sessionStorage.setItem('mpia_user', JSON.stringify(userData));
-    sessionStorage.setItem('mpia_auth_token', 'dummy-jwt-token-12345');
+    localStorage.setItem('campusUser', JSON.stringify(userData));
+    sessionStorage.setItem('mpia_auth_token', 'jwt-session-' + Date.now());
 
     // Redirect
     setTimeout(() => {
         window.location.href = '/pages/home.html';
-    }, 1500);
+    }, 1200);
 }
 
 // WebAuthn Passkey Stub
