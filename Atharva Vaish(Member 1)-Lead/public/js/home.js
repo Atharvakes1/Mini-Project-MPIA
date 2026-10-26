@@ -1,8 +1,10 @@
 // home.js - Frontend interactions for the Homepage
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Lucide Icons
-    lucide.createIcons();
+    // 1. Initialize Lucide Icons (with guard for slow CDN loads)
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 
     // 2. Sound Effects Manager
     const clickSound = document.getElementById('sound-click');
@@ -181,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mockupContent.style.opacity = 0;
                 setTimeout(() => {
                     mockupContent.innerHTML = mockups[feature];
-                    lucide.createIcons({ root: mockupContent });
+                    if (typeof lucide !== 'undefined') lucide.createIcons({ root: mockupContent });
                     mockupContent.style.opacity = 1;
                 }, 200);
             }

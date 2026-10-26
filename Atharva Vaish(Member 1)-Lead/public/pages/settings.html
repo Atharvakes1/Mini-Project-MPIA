@@ -356,7 +356,7 @@
 
     <script src="../js/theme.js"></script>
     <script>
-        lucide.createIcons();
+        typeof lucide!=="undefined"&&lucide.createIcons();
         
         function scrollToSection(id) {
             document.querySelectorAll('.settings-nav-item').forEach(el => el.classList.remove('active'));
